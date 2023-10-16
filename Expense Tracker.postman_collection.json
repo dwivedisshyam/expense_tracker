@@ -1,0 +1,623 @@
+{
+	"info": {
+		"_postman_id": "2c71e7e9-eddd-428a-9f78-fdc2f15b1887",
+		"name": "Expense Tracker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23333305"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"f_name\": \"Ram\",\n    \"l_name\": \"Kumar\",\n    \"email\": \"ramkumar@gmail.com\",\n    \"password\": \"pasword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"f_name\": \"Shyam\",\n    \"l_name\": \"Kumar\",\n    \"email\": \"ramkumar@gmail.com\",\n    \"password\": \"pasword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Bills\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/:user_id/categories",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"categories"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/categories/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/categories",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"categories"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": 1,\n        \"user_id\": 1,\n        \"name\": \"House Rent\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/:user_id/categories/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/categories/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Expense",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Credit Card\",\n    \"amount\": 15000,\n    \"category_id\":2,\n    \"due_date\": \"2023-09-15T00:00:00Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/:users_id/expenses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":users_id",
+								"expenses"
+							],
+							"variable": [
+								{
+									"key": "users_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/expenses/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"expenses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/expenses?start_date=2023-09-12&end_date=2023-09-15",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"expenses"
+							],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2023-09-12"
+								},
+								{
+									"key": "end_date",
+									"value": "2023-09-15"
+								}
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": 1,\n        \"category_id\": 1,\n        \"title\": \"Credit Card\",\n        \"amount\": 15000,\n        \"due_date\": \"2023-09-10 00:00:00+00:00\",\n        \"paid\": false\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/:user_id/expenses/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"expenses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/expenses/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"expenses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Income",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Salary\",\n    \"amount\": 15000,\n    \"date\": \"2023-09-15T00:00:00Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/:users_id/incomes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":users_id",
+								"incomes"
+							],
+							"variable": [
+								{
+									"key": "users_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/incomes/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"incomes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Credit Card\",\n    \"amount\": 15000,\n    \"category_id\":2,\n    \"due_date\": \"2023-09-15T00:00:00Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/:user_id/incomes/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"incomes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:user_id/incomes/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"incomes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
