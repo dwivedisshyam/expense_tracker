@@ -1,7 +1,7 @@
 package service
 
 import (
-	"log"
+	"errors"
 	"os"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
@@ -29,6 +29,10 @@ func (us *userSvc) Update(user *model.User) (*model.User, error) {
 func (us *userSvc) Get(user *model.User) (*model.User, error) {
 	var err error
 	user, err = us.store.Get(&model.UserFilter{ID: user.ID})
+	if err != nil {
+		return nil, err
+	}
+
 	user.Password = ""
 	return user, err
 }
@@ -37,10 +41,16 @@ func (us *userSvc) Delete(user *model.User) error {
 }
 
 func (us *userSvc) Login(user *model.User) (string, error) {
-	var err error
-	user, err = us.store.Get(&model.UserFilter{Email: user.Email})
+	user, err := us.store.Get(&model.UserFilter{Email: user.Email})
+	if err != nil {
+		return "", err
+	}
 
 	key := []byte(os.Getenv("JWT_KEY"))
+	if len(key) == 0 {
+		return "", errors.New("JWT_KEY missing")
+	}
+
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"id":     user.ID,
@@ -51,7 +61,8 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 
 	s, err := t.SignedString(key)
 	if err != nil {
-		log.Println(err)
+		return "", err
 	}
+
 	return s, err
 }
