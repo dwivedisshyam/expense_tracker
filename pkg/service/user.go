@@ -52,11 +52,9 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 	}
 
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"id":     user.ID,
-			"f_name": user.FName,
-			"l_name": user.LName,
-			"email":  user.Email,
+		model.Claims{
+			ID:    user.ID,
+			Email: user.Email,
 		})
 
 	s, err := t.SignedString(key)
