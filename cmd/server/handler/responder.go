@@ -3,6 +3,8 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/dwivedisshyam/go-lib/pkg/errors"
 )
 
 func Bind(r *http.Request, v any) error {
@@ -19,6 +21,14 @@ func (resp Responder) Respond(data any, err error) {
 	r := &Response{
 		Data:   data,
 		Errors: err,
+	}
+
+	if err != nil {
+		status = http.StatusInternalServerError
+
+		if er, ok := err.(*errors.Error); ok {
+			status = er.StatusCode
+		}
 	}
 
 	resp.ResponseWriter.Header().Set("Content-Type", "application/json")

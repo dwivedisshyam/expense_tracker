@@ -1,10 +1,11 @@
 package store
 
 import (
-	"fmt"
+	"database/sql"
 
 	"github.com/dwivedisshyam/expense_tracker/db"
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
+	"github.com/dwivedisshyam/go-lib/pkg/errors"
 )
 
 type expStore struct {
@@ -24,7 +25,7 @@ func (us *expStore) Index(f *model.ExpFilter) ([]model.Expense, error) {
 	rows, err := us.db.Query(q, args...)
 	if err != nil {
 
-		return nil, err
+		return nil, errors.Unexpected(err.Error())
 	}
 
 	for rows.Next() {
@@ -32,8 +33,7 @@ func (us *expStore) Index(f *model.ExpFilter) ([]model.Expense, error) {
 
 		err = rows.Scan(&e.ID, &e.Title, &e.Amount, &e.DueDate, &e.CategoryID, &e.Paid)
 		if err != nil {
-			fmt.Println("err", err)
-			return nil, err
+			return nil, errors.Unexpected(err.Error())
 		}
 
 		exps = append(exps, e)
@@ -47,12 +47,12 @@ func (us *expStore) Create(e *model.Expense) (*model.Expense, error) {
 
 	result, err := us.db.Exec(q, e.UserID, e.Title, e.Amount, e.CategoryID, e.DueDate, e.Paid)
 	if err != nil {
-		return nil, err
+		return nil, errors.Unexpected(err.Error())
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, errors.Unexpected(err.Error())
 	}
 
 	e.ID = id
@@ -64,7 +64,7 @@ func (us *expStore) Update(e *model.Expense) (*model.Expense, error) {
 
 	_, err := us.db.Exec(q, e.Title, e.Amount, e.DueDate, e.CategoryID, e.Paid, e.ID, e.UserID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Unexpected(err.Error())
 	}
 
 	return e, nil
@@ -73,7 +73,11 @@ func (us *expStore) Get(e *model.Expense) (*model.Expense, error) {
 	q := `SELECT title,amount,due_date,category_id,is_paid FROM expenses WHERE id=$1 AND user_id=$2`
 	err := us.db.QueryRow(q, e.ID, e.UserID).Scan(&e.Title, &e.Amount, &e.DueDate, &e.CategoryID, &e.Paid)
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			return nil, errors.NotFound("user not found")
+		}
+
+		return nil, errors.Unexpected(err.Error())
 	}
 
 	return e, nil
@@ -82,8 +86,10 @@ func (us *expStore) Delete(e *model.Expense) error {
 	q := `DELETE FROM expenses WHERE id=$1 AND user_id=$2`
 
 	_, err := us.db.Exec(q, e.ID, e.UserID)
-
-	return err
+	if err != nil {
+		return errors.Unexpected(err.Error())
+	}
+	return nil
 }
 
 func clause(f *model.ExpFilter) (c string, args []interface{}) {
