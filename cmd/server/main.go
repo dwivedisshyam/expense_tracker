@@ -6,6 +6,7 @@ import (
 
 	"github.com/dwivedisshyam/expense_tracker/cmd/server/handler"
 	"github.com/dwivedisshyam/expense_tracker/db"
+	"github.com/dwivedisshyam/expense_tracker/pkg/middleware"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
 	"github.com/gorilla/mux"
@@ -13,6 +14,8 @@ import (
 
 func main() {
 	r := mux.NewRouter()
+
+	r.Use(middleware.Auth)
 
 	db := db.New()
 
@@ -31,12 +34,12 @@ func main() {
 	expH := handler.NewExpense(expSvc)
 	incH := handler.NewIncome(incomeSvc)
 
-	r.HandleFunc("/login", userH.Login).Methods(http.MethodGet)
+	r.HandleFunc("/login", userH.Login).Methods(http.MethodPost)
 
 	r.HandleFunc("/users", userH.Create).Methods(http.MethodPost)
-	r.HandleFunc("/users/{id}", userH.Get).Methods(http.MethodGet)
-	r.HandleFunc("/users/{id}", userH.Update).Methods(http.MethodPut)
-	r.HandleFunc("/users/{id}", userH.Delete).Methods(http.MethodDelete)
+	r.HandleFunc("/users/{user_id}", userH.Get).Methods(http.MethodGet)
+	r.HandleFunc("/users/{user_id}", userH.Update).Methods(http.MethodPut)
+	r.HandleFunc("/users/{user_id}", userH.Delete).Methods(http.MethodDelete)
 
 	r.HandleFunc("/users/{user_id}/categories", catH.Create).Methods(http.MethodPost)
 	r.HandleFunc("/users/{user_id}/categories", catH.Index).Methods(http.MethodGet)
