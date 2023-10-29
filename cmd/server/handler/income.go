@@ -2,10 +2,10 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
+	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -22,12 +22,12 @@ func (us *incHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	resp := Responder{w}
 
-	if err := Bind(r, &c); err != nil {
+	if err := utils.Bind(r, &c); err != nil {
 		resp.Respond(nil, err)
 		return
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -46,12 +46,12 @@ func (us *incHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (us *incHandler) Get(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -70,16 +70,16 @@ func (us *incHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	if err := Bind(r, &c); err != nil {
+	if err := utils.Bind(r, &c); err != nil {
 		resp.Respond(nil, err)
 		return
 	}
@@ -99,12 +99,12 @@ func (us *incHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (us *incHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
