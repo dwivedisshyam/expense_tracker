@@ -6,6 +6,7 @@ import (
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
+	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -46,7 +47,7 @@ func (us *expHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	resp := Responder{w}
 
-	if err := Bind(r, &c); err != nil {
+	if err := utils.Bind(r, &c); err != nil {
 		resp.Respond(nil, err)
 		return
 	}
@@ -103,7 +104,7 @@ func (us *expHandler) Update(w http.ResponseWriter, r *http.Request) {
 		resp.Respond(nil, err)
 	}
 
-	if err := Bind(r, &c); err != nil {
+	if err := utils.Bind(r, &c); err != nil {
 		resp.Respond(nil, err)
 		return
 	}

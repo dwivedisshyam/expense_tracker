@@ -7,10 +7,6 @@ import (
 	"github.com/dwivedisshyam/go-lib/pkg/errors"
 )
 
-func Bind(r *http.Request, v any) error {
-	return json.NewDecoder(r.Body).Decode(v)
-}
-
 type Responder struct {
 	http.ResponseWriter
 }
