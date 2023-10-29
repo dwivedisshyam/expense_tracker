@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
@@ -22,7 +21,7 @@ func (us *catHandler) Index(w http.ResponseWriter, r *http.Request) {
 	var f model.CatFilter
 
 	resp := Responder{w}
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -47,7 +46,7 @@ func (us *catHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -66,12 +65,12 @@ func (us *catHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (us *catHandler) Get(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -90,12 +89,12 @@ func (us *catHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -120,12 +119,12 @@ func (us *catHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (us *catHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}

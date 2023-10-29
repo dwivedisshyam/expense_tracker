@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
@@ -39,7 +38,7 @@ func (us *userHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (us *userHandler) Get(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	id, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -58,7 +57,7 @@ func (us *userHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	id, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -82,7 +81,7 @@ func (us *userHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (us *userHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	id, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}

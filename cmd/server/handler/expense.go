@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
@@ -23,7 +22,7 @@ func (us *expHandler) Index(w http.ResponseWriter, r *http.Request) {
 
 	resp := Responder{w}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -52,7 +51,7 @@ func (us *expHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -71,12 +70,12 @@ func (us *expHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (us *expHandler) Get(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -95,11 +94,11 @@ func (us *expHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
@@ -124,12 +123,12 @@ func (us *expHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (us *expHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	resp := Responder{w}
 
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(mux.Vars(r)["id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
 
-	userid, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
 	if err != nil {
 		resp.Respond(nil, err)
 	}
