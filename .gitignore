@@ -27,3 +27,5 @@ go.work
 # air files and directories
 tmp
 .air.toml
+.local.env
+.vscode

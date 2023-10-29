@@ -2,19 +2,22 @@ package service
 
 import (
 	"errors"
-	"os"
+	"fmt"
+	"time"
 
+	"github.com/dwivedisshyam/expense_tracker/pkg"
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type userSvc struct {
+	app   *pkg.App
 	store store.User
 }
 
-func NewUser(s store.User) User {
-	return &userSvc{store: s}
+func NewUser(app *pkg.App, s store.User) User {
+	return &userSvc{app: app, store: s}
 }
 
 func (us *userSvc) Create(user *model.User) (*model.User, error) {
@@ -46,7 +49,7 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 		return "", err
 	}
 
-	key := []byte(os.Getenv("JWT_KEY"))
+	key := []byte(us.app.GetEnv("JWT_KEY"))
 	if len(key) == 0 {
 		return "", errors.New("JWT_KEY missing")
 	}
@@ -55,10 +58,14 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 		model.Claims{
 			ID:    user.ID,
 			Email: user.Email,
+			RegisteredClaims: jwt.RegisteredClaims{
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 1)),
+			},
 		})
 
 	s, err := t.SignedString(key)
 	if err != nil {
+		fmt.Println(err)
 		return "", err
 	}
 

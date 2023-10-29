@@ -1,21 +1,18 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/dwivedisshyam/expense_tracker/cmd/server/handler"
 	"github.com/dwivedisshyam/expense_tracker/db"
+	"github.com/dwivedisshyam/expense_tracker/pkg"
 	"github.com/dwivedisshyam/expense_tracker/pkg/middleware"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
-	"github.com/gorilla/mux"
 )
 
 func main() {
-	r := mux.NewRouter()
+	app := pkg.NewApp()
 
-	r.Use(middleware.Auth)
+	app.Use(middleware.Auth(app))
 
 	db := db.New()
 
@@ -24,7 +21,7 @@ func main() {
 	catStore := store.NewCategory(db)
 	incomeStore := store.NewIncome(db)
 
-	userSvc := service.NewUser(userStore)
+	userSvc := service.NewUser(app, userStore)
 	catSvc := service.NewCategory(catStore)
 	expSvc := service.NewExpense(expStore)
 	incomeSvc := service.NewIncome(incomeStore)
@@ -34,29 +31,29 @@ func main() {
 	expH := handler.NewExpense(expSvc)
 	incH := handler.NewIncome(incomeSvc)
 
-	r.HandleFunc("/login", userH.Login).Methods(http.MethodPost)
+	app.POST("/login", userH.Login)
 
-	r.HandleFunc("/users", userH.Create).Methods(http.MethodPost)
-	r.HandleFunc("/users/{user_id}", userH.Get).Methods(http.MethodGet)
-	r.HandleFunc("/users/{user_id}", userH.Update).Methods(http.MethodPut)
-	r.HandleFunc("/users/{user_id}", userH.Delete).Methods(http.MethodDelete)
+	app.POST("/users", userH.Create)
+	app.GET("/users/{user_id}", userH.Get)
+	app.PUT("/users/{user_id}", userH.Update)
+	app.DELETE("/users/{user_id}", userH.Delete)
 
-	r.HandleFunc("/users/{user_id}/categories", catH.Create).Methods(http.MethodPost)
-	r.HandleFunc("/users/{user_id}/categories", catH.Index).Methods(http.MethodGet)
-	r.HandleFunc("/users/{user_id}/categories/{id}", catH.Get).Methods(http.MethodGet)
-	r.HandleFunc("/users/{user_id}/categories/{id}", catH.Update).Methods(http.MethodPut)
-	r.HandleFunc("/users/{user_id}/categories/{id}", catH.Delete).Methods(http.MethodDelete)
+	app.POST("/users/{user_id}/categories", catH.Create)
+	app.GET("/users/{user_id}/categories", catH.Index)
+	app.GET("/users/{user_id}/categories/{id}", catH.Get)
+	app.PUT("/users/{user_id}/categories/{id}", catH.Update)
+	app.DELETE("/users/{user_id}/categories/{id}", catH.Delete)
 
-	r.HandleFunc("/users/{user_id}/expenses", expH.Create).Methods(http.MethodPost)
-	r.HandleFunc("/users/{user_id}/expenses", expH.Index).Methods(http.MethodGet)
-	r.HandleFunc("/users/{user_id}/expenses/{id}", expH.Get).Methods(http.MethodGet)
-	r.HandleFunc("/users/{user_id}/expenses/{id}", expH.Update).Methods(http.MethodPut)
-	r.HandleFunc("/users/{user_id}/expenses/{id}", expH.Delete).Methods(http.MethodDelete)
+	app.POST("/users/{user_id}/expenses", expH.Create)
+	app.GET("/users/{user_id}/expenses", expH.Index)
+	app.GET("/users/{user_id}/expenses/{id}", expH.Get)
+	app.PUT("/users/{user_id}/expenses/{id}", expH.Update)
+	app.DELETE("/users/{user_id}/expenses/{id}", expH.Delete)
 
-	r.HandleFunc("/users/{user_id}/incomes", incH.Create).Methods(http.MethodPost)
-	r.HandleFunc("/users/{user_id}/incomes/{id}", incH.Get).Methods(http.MethodGet)
-	r.HandleFunc("/users/{user_id}/incomes/{id}", incH.Update).Methods(http.MethodPut)
-	r.HandleFunc("/users/{user_id}/incomes/{id}", incH.Delete).Methods(http.MethodDelete)
+	app.POST("/users/{user_id}/incomes", incH.Create)
+	app.GET("/users/{user_id}/incomes/{id}", incH.Get)
+	app.PUT("/users/{user_id}/incomes/{id}", incH.Update)
+	app.DELETE("/users/{user_id}/incomes/{id}", incH.Delete)
 
 	//fs := http.FileServer(http.Dir("./web/assets/"))
 	//r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
@@ -71,6 +68,5 @@ func main() {
 	//	t.Execute(w, nil)
 	//})
 
-	log.Println("Starting HTTP server @ :8000")
-	log.Fatal(http.ListenAndServe(":8000", r))
+	app.Run()
 }
