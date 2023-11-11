@@ -24,8 +24,8 @@ jobs:
 
     - name: Test
       run: |
-      sudo go test ./... -coverprofile coverage.out -covermode count
-      sudo go tool cover -func coverage.out
+        sudo go test ./... -coverprofile coverage.out -covermode count
+        sudo go tool cover -func coverage.out
     
     - name: Quality Gate
       run: |
