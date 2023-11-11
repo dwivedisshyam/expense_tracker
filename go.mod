@@ -1,6 +1,6 @@
 module github.com/dwivedisshyam/expense_tracker
 
-go 1.21.0
+go 1.21
 
 require (
 	github.com/dwivedisshyam/go-lib v0.0.0-20230327172803-197895ccab5e
