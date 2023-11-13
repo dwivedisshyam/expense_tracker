@@ -6,7 +6,7 @@ import (
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
 )
 
 type catHandler struct {
@@ -17,124 +17,113 @@ func NewCategory(s service.Category) catHandler {
 	return catHandler{catSvc: s}
 }
 
-func (us *catHandler) Index(w http.ResponseWriter, r *http.Request) {
+func (us *catHandler) Index(ctx echo.Context) error {
 	var f model.CatFilter
 
-	resp := Responder{w}
-	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
+
 	}
 
-	f.UserID = int64(userid)
+	f.UserID = userid
 	cats, err := us.catSvc.Index(&f)
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
+
 	}
 
-	resp.Respond(cats, nil)
-
+	return ctx.JSON(http.StatusOK, cats)
 }
 
-func (us *catHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (us *catHandler) Create(ctx echo.Context) error {
 	var c model.Category
 
-	resp := Responder{w}
-
-	if err := utils.Bind(r, &c); err != nil {
-		resp.Respond(nil, err)
-		return
+	if err := ctx.Bind(&c); err != nil {
+		return err
 	}
 
-	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
 	}
 
 	c.UserID = int64(userid)
 
 	cat, err := us.catSvc.Create(&c)
 	if err != nil {
-		resp.Respond(nil, err)
-		return
+		return err
 	}
 
-	resp.Respond(cat, nil)
+	return ctx.JSON(http.StatusCreated, cat)
 }
 
-func (us *catHandler) Get(w http.ResponseWriter, r *http.Request) {
-	resp := Responder{w}
-
-	id, err := utils.ToInt64(mux.Vars(r)["id"])
+func (us *catHandler) Get(ctx echo.Context) error {
+	id, err := utils.ToInt64(ctx.Param("id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
 	}
 
-	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
 	}
 
 	user, err := us.catSvc.Get(&model.Category{ID: int64(id), UserID: int64(userid)})
 	if err != nil {
-		resp.Respond(nil, err)
-		return
+		return err
 	}
 
-	resp.Respond(user, nil)
+	return ctx.JSON(http.StatusOK, user)
 }
 
-func (us *catHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (us *catHandler) Update(ctx echo.Context) error {
 	var c model.Category
 
-	resp := Responder{w}
-
-	id, err := utils.ToInt64(mux.Vars(r)["id"])
+	id, err := utils.ToInt64(ctx.Param("id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
 	}
 
-	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
 	}
 
-	if err := utils.Bind(r, &c); err != nil {
-		resp.Respond(nil, err)
-		return
+	if err := ctx.Bind(&c); err != nil {
+		return err
 	}
 
-	c.ID = int64(id)
-	c.UserID = int64(userid)
+	c.ID = id
+	c.UserID = userid
 
 	user, err := us.catSvc.Update(&c)
 	if err != nil {
-		resp.Respond(nil, err)
-		return
+		return err
 	}
 
-	resp.Respond(user, nil)
+	return ctx.JSON(http.StatusOK, user)
 }
 
-func (us *catHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	resp := Responder{w}
-
-	id, err := utils.ToInt64(mux.Vars(r)["id"])
+func (us *catHandler) Delete(ctx echo.Context) error {
+	id, err := utils.ToInt64(ctx.Param("id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
 	}
 
-	userid, err := utils.ToInt64(mux.Vars(r)["user_id"])
+	userid, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		resp.Respond(nil, err)
+		return err
 	}
 
 	err = us.catSvc.Delete(&model.Category{
 		ID:     int64(id),
 		UserID: int64(userid),
 	})
+
 	if err != nil {
-		resp.Respond(nil, err)
-		return
+		return err
 	}
+
+	return ctx.JSON(http.StatusNoContent, nil)
 }
