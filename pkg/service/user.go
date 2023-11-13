@@ -3,27 +3,31 @@ package service
 import (
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
-	"github.com/dwivedisshyam/expense_tracker/pkg"
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type userSvc struct {
-	app   *pkg.App
 	store store.User
 }
 
-func NewUser(app *pkg.App, s store.User) User {
-	return &userSvc{app: app, store: s}
+func NewUser(s store.User) User {
+	return &userSvc{store: s}
 }
 
 func (us *userSvc) Create(user *model.User) (*model.User, error) {
 	var err error
 	user, err = us.store.Create(user)
+	if err != nil {
+		return nil, err
+	}
+
 	user.Password = ""
+
 	return user, err
 }
 func (us *userSvc) Update(user *model.User) (*model.User, error) {
@@ -49,7 +53,7 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 		return "", err
 	}
 
-	key := []byte(us.app.GetEnv("JWT_KEY"))
+	key := []byte(os.Getenv("JWT_KEY"))
 	if len(key) == 0 {
 		return "", errors.New("JWT_KEY missing")
 	}
@@ -59,7 +63,7 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 			ID:    user.ID,
 			Email: user.Email,
 			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 1)),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 			},
 		})
 

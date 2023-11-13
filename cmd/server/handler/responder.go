@@ -1,17 +1,13 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/dwivedisshyam/go-lib/pkg/errors"
+	"github.com/labstack/echo/v4"
 )
 
-type Responder struct {
-	http.ResponseWriter
-}
-
-func (resp Responder) Respond(data any, err error) {
+func Respond(ctx echo.Context, data any, err error) {
 	status := http.StatusOK
 
 	r := &Response{
@@ -27,11 +23,7 @@ func (resp Responder) Respond(data any, err error) {
 		}
 	}
 
-	resp.ResponseWriter.Header().Set("Content-Type", "application/json")
-	resp.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.ResponseWriter.WriteHeader(status)
-
-	json.NewEncoder(resp.ResponseWriter).Encode(r)
+	ctx.JSON(status, r)
 }
 
 type Response struct {
