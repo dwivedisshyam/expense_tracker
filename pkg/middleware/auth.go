@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -14,7 +13,6 @@ import (
 )
 
 func exemptPath(path string) bool {
-	fmt.Println(path)
 	paths := map[string]bool{
 		"POST /login": true,
 		"POST /users": true,

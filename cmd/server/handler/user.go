@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
@@ -17,84 +15,86 @@ func NewUser(s service.User) userHandler {
 	return userHandler{userSvc: s}
 }
 
-func (us *userHandler) Create(ctx echo.Context) error {
+func (us *userHandler) Create(ctx echo.Context) (any, error) {
 	var u model.User
 
 	if err := ctx.Bind(&u); err != nil {
-		return err
+		return nil, err
 	}
 
 	user, err := us.userSvc.Create(&u)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusCreated, user)
+	return user, nil
 }
 
-func (us *userHandler) Get(ctx echo.Context) error {
+func (us *userHandler) Get(ctx echo.Context) (any, error) {
 	id, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	user, err := us.userSvc.Get(&model.User{ID: int64(id)})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusOK, user)
+	return user, nil
 }
 
-func (us *userHandler) Update(ctx echo.Context) error {
+func (us *userHandler) Update(ctx echo.Context) (any, error) {
 	var u model.User
 
 	id, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := ctx.Bind(&u); err != nil {
-		return err
+		return nil, err
 	}
 
 	u.ID = int64(id)
 
 	user, err := us.userSvc.Update(&u)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusOK, user)
+	return user, nil
 }
 
-func (us *userHandler) Delete(ctx echo.Context) error {
+func (us *userHandler) Delete(ctx echo.Context) (any, error) {
 	id, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = us.userSvc.Delete(&model.User{ID: id})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusNoContent, nil)
+	return nil, nil
 }
 
-func (us *userHandler) Login(ctx echo.Context) error {
+func (us *userHandler) Login(ctx echo.Context) (any, error) {
 	var u model.User
 
 	if err := ctx.Bind(&u); err != nil {
-		return err
+		return nil, err
 
 	}
 
 	token, err := us.userSvc.Login(&u)
 	if err != nil {
-		return err
+		return nil, err
 
 	}
 
-	return ctx.JSON(http.StatusOK, token)
+	return map[string]string{
+		"token": token,
+	}, nil
 }

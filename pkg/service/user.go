@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -20,29 +19,40 @@ func NewUser(s store.User) User {
 }
 
 func (us *userSvc) Create(user *model.User) (*model.User, error) {
-	var err error
-	user, err = us.store.Create(user)
+	// TODO: Hash password
+	if err := user.Validate(); err != nil {
+		return nil, err
+	}
+
+	user, err := us.store.Create(user)
 	if err != nil {
 		return nil, err
 	}
 
 	user.Password = ""
 
-	return user, err
+	return user, nil
 }
+
 func (us *userSvc) Update(user *model.User) (*model.User, error) {
+	if err := user.Validate(); err != nil {
+		return nil, err
+	}
+
 	return us.store.Update(user)
 }
+
 func (us *userSvc) Get(user *model.User) (*model.User, error) {
-	var err error
-	user, err = us.store.Get(&model.UserFilter{ID: user.ID})
+	user, err := us.store.Get(&model.UserFilter{ID: user.ID})
 	if err != nil {
 		return nil, err
 	}
 
 	user.Password = ""
-	return user, err
+
+	return user, nil
 }
+
 func (us *userSvc) Delete(user *model.User) error {
 	return us.store.Delete(user)
 }
@@ -69,7 +79,6 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 
 	s, err := t.SignedString(key)
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 
