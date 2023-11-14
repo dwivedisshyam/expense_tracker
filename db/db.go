@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	// nolint: golint
 	_ "github.com/mattn/go-sqlite3"
 )
 

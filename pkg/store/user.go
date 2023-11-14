@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	goErr "errors"
 
 	"github.com/dwivedisshyam/expense_tracker/db"
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
@@ -58,9 +59,10 @@ func (us *userStore) Get(f *model.UserFilter) (*model.User, error) {
 	}
 
 	user := new(model.User)
+
 	err := us.db.QueryRow(q, identifier).Scan(&user.ID, &user.FName, &user.LName, &user.Email, &user.Password)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if goErr.Is(err, sql.ErrNoRows) {
 			return nil, errors.NotFound("user not found")
 		}
 
@@ -73,8 +75,7 @@ func (us *userStore) Get(f *model.UserFilter) (*model.User, error) {
 func (us *userStore) Delete(user *model.User) error {
 	q := `DELETE FROM users WHERE id=$1`
 
-	_, err := us.db.Exec(q, user.ID)
-	if err != nil {
+	if _, err := us.db.Exec(q, user.ID); err != nil {
 		return errors.Unexpected(err.Error())
 	}
 

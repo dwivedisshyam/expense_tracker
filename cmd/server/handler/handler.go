@@ -19,6 +19,7 @@ func ErrHandler(err error, ctx echo.Context) {
 
 	if er == nil {
 		ctx.JSON(http.StatusInternalServerError, nil)
+
 		return
 	}
 

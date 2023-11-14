@@ -34,6 +34,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		authToken = strings.TrimPrefix(authToken, "Bearer ")
+
 		key := []byte(os.Getenv("JWT_KEY"))
 		if len(key) == 0 {
 			ctx.Logger().Error("JWT_KEY is missing")

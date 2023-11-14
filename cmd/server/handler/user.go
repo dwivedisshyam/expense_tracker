@@ -37,7 +37,7 @@ func (us *userHandler) Get(ctx echo.Context) (any, error) {
 		return nil, errors.BadRequest(err.Error())
 	}
 
-	user, err := us.userSvc.Get(&model.User{ID: int64(id)})
+	user, err := us.userSvc.Get(&model.User{ID: id})
 	if err != nil {
 		return nil, err
 	}
@@ -86,13 +86,11 @@ func (us *userHandler) Login(ctx echo.Context) (any, error) {
 
 	if err := ctx.Bind(&u); err != nil {
 		return nil, errors.BadRequest(err.Error())
-
 	}
 
 	token, err := us.userSvc.Login(&u)
 	if err != nil {
 		return nil, err
-
 	}
 
 	return map[string]string{

@@ -71,7 +71,7 @@ func (us *expHandler) Get(ctx echo.Context) error {
 		return err
 	}
 
-	user, err := us.expSvc.Get(&model.Expense{ID: int64(id), UserID: int64(userid)})
+	user, err := us.expSvc.Get(&model.Expense{ID: id, UserID: userid})
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (us *expHandler) Delete(ctx echo.Context) error {
 		return err
 	}
 
-	err = us.expSvc.Delete(&model.Expense{ID: int64(id), UserID: int64(userid)})
+	err = us.expSvc.Delete(&model.Expense{ID: id, UserID: userid})
 	if err != nil {
 		return err
 	}

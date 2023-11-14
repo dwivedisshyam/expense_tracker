@@ -29,7 +29,7 @@ func (us *incHandler) Create(ctx echo.Context) error {
 		return err
 	}
 
-	c.UserID = int64(userid)
+	c.UserID = userid
 
 	user, err := us.incSvc.Create(&c)
 	if err != nil {
@@ -81,7 +81,6 @@ func (us *incHandler) Update(ctx echo.Context) error {
 	user, err := us.incSvc.Update(&c)
 	if err != nil {
 		return err
-
 	}
 
 	return ctx.JSON(http.StatusOK, user)
@@ -98,7 +97,7 @@ func (us *incHandler) Delete(ctx echo.Context) error {
 		return err
 	}
 
-	err = us.incSvc.Delete(&model.Income{ID: int64(id), UserID: int64(userid)})
+	err = us.incSvc.Delete(&model.Income{ID: id, UserID: userid})
 	if err != nil {
 		return err
 	}
