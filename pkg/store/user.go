@@ -23,6 +23,7 @@ func (us *userStore) Create(user *model.User) (*model.User, error) {
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
+
 	id, err := result.LastInsertId()
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
@@ -74,7 +75,6 @@ func (us *userStore) Delete(user *model.User) error {
 
 	_, err := us.db.Exec(q, user.ID)
 	if err != nil {
-
 		return errors.Unexpected(err.Error())
 	}
 

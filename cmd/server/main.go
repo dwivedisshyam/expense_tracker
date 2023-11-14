@@ -34,12 +34,12 @@ func main() {
 	expH := handler.NewExpense(expSvc)
 	incH := handler.NewIncome(incomeSvc)
 
-	e.POST("/login", userH.Login)
+	e.POST("/login", handler.Handler(userH.Login))
 
-	e.POST("/users", userH.Create)
-	e.GET("/users/:user_id", userH.Get)
-	e.PUT("/users/:user_id", userH.Update)
-	e.DELETE("/users/:user_id", userH.Delete)
+	e.POST("/users", handler.Handler(userH.Create))
+	e.GET("/users/:user_id", handler.Handler(userH.Get))
+	e.PUT("/users/:user_id", handler.Handler(userH.Update))
+	e.DELETE("/users/:user_id", handler.Handler(userH.Delete))
 
 	e.POST("/users/:user_id/categories", catH.Create)
 	e.GET("/users/:user_id/categories", catH.Index)
