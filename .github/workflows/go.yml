@@ -40,3 +40,26 @@ jobs:
                 echo "Failed"
                 exit 1
             fi
+  lint:
+    name: Linter
+    uses: golangci/golangci-lint-action@v3.7.0
+    with:
+      version: # optional
+      # golangci-lint command line arguments
+      args: # optional, default is 
+      # golangci-lint working directory, default is project root
+      working-directory: # optional
+      # the token is used for fetching patch of a pull request to show only new issues
+      github-token: # optional, default is ${{ github.token }}
+      # if set to true and the action runs on a pull request - the action outputs only newly found issues
+      only-new-issues: # optional, default is false
+      # if set to true then the all caching functionality will be complete disabled,
+  # takes precedence over all other caching options.
+      skip-cache: # optional, default is false
+      # if set to true then the action doesn't cache or restore ~/go/pkg.
+      skip-pkg-cache: # optional, default is false
+      # if set to true then the action doesn't cache or restore ~/.cache/go-build.
+      skip-build-cache: # optional, default is false
+      # The mode to install golangci-lint. It can be 'binary' or 'goinstall'.
+      install-mode: # optional, default is binary
+          
