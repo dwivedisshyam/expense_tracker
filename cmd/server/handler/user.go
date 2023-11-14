@@ -4,6 +4,7 @@ import (
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
+	"github.com/dwivedisshyam/go-lib/pkg/errors"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,7 +20,7 @@ func (us *userHandler) Create(ctx echo.Context) (any, error) {
 	var u model.User
 
 	if err := ctx.Bind(&u); err != nil {
-		return nil, err
+		return nil, errors.BadRequest(err.Error())
 	}
 
 	user, err := us.userSvc.Create(&u)
@@ -33,7 +34,7 @@ func (us *userHandler) Create(ctx echo.Context) (any, error) {
 func (us *userHandler) Get(ctx echo.Context) (any, error) {
 	id, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		return nil, err
+		return nil, errors.BadRequest(err.Error())
 	}
 
 	user, err := us.userSvc.Get(&model.User{ID: int64(id)})
@@ -49,14 +50,14 @@ func (us *userHandler) Update(ctx echo.Context) (any, error) {
 
 	id, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		return nil, err
+		return nil, errors.BadRequest(err.Error())
 	}
 
 	if err := ctx.Bind(&u); err != nil {
-		return nil, err
+		return nil, errors.BadRequest(err.Error())
 	}
 
-	u.ID = int64(id)
+	u.ID = id
 
 	user, err := us.userSvc.Update(&u)
 	if err != nil {
@@ -69,7 +70,7 @@ func (us *userHandler) Update(ctx echo.Context) (any, error) {
 func (us *userHandler) Delete(ctx echo.Context) (any, error) {
 	id, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
-		return nil, err
+		return nil, errors.BadRequest(err.Error())
 	}
 
 	err = us.userSvc.Delete(&model.User{ID: id})
@@ -84,7 +85,7 @@ func (us *userHandler) Login(ctx echo.Context) (any, error) {
 	var u model.User
 
 	if err := ctx.Bind(&u); err != nil {
-		return nil, err
+		return nil, errors.BadRequest(err.Error())
 
 	}
 
