@@ -1,13 +1,17 @@
 package service
 
 import (
-	"errors"
 	"os"
 	"time"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
+	"github.com/dwivedisshyam/go-lib/pkg/errors"
 	"github.com/golang-jwt/jwt/v5"
+)
+
+const (
+	day = time.Hour * 24
 )
 
 type userSvc struct {
@@ -65,7 +69,7 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 
 	key := []byte(os.Getenv("JWT_KEY"))
 	if len(key) == 0 {
-		return "", errors.New("JWT_KEY missing")
+		return "", errors.Unexpected("JWT_KEY missing")
 	}
 
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256,
@@ -73,7 +77,7 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 			ID:    user.ID,
 			Email: user.Email,
 			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(day)),
 			},
 		})
 
