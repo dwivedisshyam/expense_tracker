@@ -17,7 +17,8 @@ func Test_ToInt64(t *testing.T) {
 		{"non-string", "3N", 0, true},
 	}
 
-	for _, tc := range tcs {
+	for i := range tcs {
+		tc := tcs[i]
 		t.Run(tc.name, func(t *testing.T) {
 			actual, err := ToInt64(tc.s)
 

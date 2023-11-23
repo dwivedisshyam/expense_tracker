@@ -16,12 +16,15 @@ func NewIncome(s store.Income) Income {
 func (us *incSvc) Create(i *model.Income) (*model.Income, error) {
 	return us.store.Create(i)
 }
+
 func (us *incSvc) Update(i *model.Income) (*model.Income, error) {
 	return us.store.Update(i)
 }
+
 func (us *incSvc) Get(i *model.Income) (*model.Income, error) {
 	return us.store.Get(i)
 }
+
 func (us *incSvc) Delete(i *model.Income) error {
 	return us.store.Delete(i)
 }

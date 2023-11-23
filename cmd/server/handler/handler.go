@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// nolint: errorlint
 func ErrHandler(err error, ctx echo.Context) {
 	var er *errors.Error
 
@@ -19,6 +20,7 @@ func ErrHandler(err error, ctx echo.Context) {
 
 	if er == nil {
 		ctx.JSON(http.StatusInternalServerError, nil)
+
 		return
 	}
 

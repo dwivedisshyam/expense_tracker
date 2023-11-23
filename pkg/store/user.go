@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	goErr "errors"
 
 	"github.com/dwivedisshyam/expense_tracker/db"
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
@@ -19,17 +20,10 @@ func NewUser(db *db.DB) User {
 func (us *userStore) Create(user *model.User) (*model.User, error) {
 	q := `INSERT INTO users (f_name, l_name, email, password) VALUES ($1,$2,$3,$4)`
 
-	result, err := us.db.Exec(q, user.FName, user.LName, user.Email, user.Password)
+	_, err := us.db.Exec(q, user.FName, user.LName, user.Email, user.Password)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, errors.Unexpected(err.Error())
-	}
-
-	user.ID = id
 
 	return user, nil
 }
@@ -58,9 +52,10 @@ func (us *userStore) Get(f *model.UserFilter) (*model.User, error) {
 	}
 
 	user := new(model.User)
+
 	err := us.db.QueryRow(q, identifier).Scan(&user.ID, &user.FName, &user.LName, &user.Email, &user.Password)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if goErr.Is(err, sql.ErrNoRows) {
 			return nil, errors.NotFound("user not found")
 		}
 
@@ -73,8 +68,7 @@ func (us *userStore) Get(f *model.UserFilter) (*model.User, error) {
 func (us *userStore) Delete(user *model.User) error {
 	q := `DELETE FROM users WHERE id=$1`
 
-	_, err := us.db.Exec(q, user.ID)
-	if err != nil {
+	if _, err := us.db.Exec(q, user.ID); err != nil {
 		return errors.Unexpected(err.Error())
 	}
 

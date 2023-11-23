@@ -23,14 +23,13 @@ func (us *catHandler) Index(ctx echo.Context) error {
 	userid, err := utils.ToInt64(ctx.Param("user_id"))
 	if err != nil {
 		return err
-
 	}
 
 	f.UserID = userid
+
 	cats, err := us.catSvc.Index(&f)
 	if err != nil {
 		return err
-
 	}
 
 	return ctx.JSON(http.StatusOK, cats)
@@ -48,7 +47,7 @@ func (us *catHandler) Create(ctx echo.Context) error {
 		return err
 	}
 
-	c.UserID = int64(userid)
+	c.UserID = userid
 
 	cat, err := us.catSvc.Create(&c)
 	if err != nil {
@@ -69,7 +68,7 @@ func (us *catHandler) Get(ctx echo.Context) error {
 		return err
 	}
 
-	user, err := us.catSvc.Get(&model.Category{ID: int64(id), UserID: int64(userid)})
+	user, err := us.catSvc.Get(&model.Category{ID: id, UserID: userid})
 	if err != nil {
 		return err
 	}
@@ -117,8 +116,8 @@ func (us *catHandler) Delete(ctx echo.Context) error {
 	}
 
 	err = us.catSvc.Delete(&model.Category{
-		ID:     int64(id),
-		UserID: int64(userid),
+		ID:     id,
+		UserID: userid,
 	})
 
 	if err != nil {

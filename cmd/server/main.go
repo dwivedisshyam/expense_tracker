@@ -6,11 +6,15 @@ import (
 	"github.com/dwivedisshyam/expense_tracker/pkg/middleware"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
+	"github.com/dwivedisshyam/go-lib/pkg/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
 
+// nolint: funlen
 func main() {
+	config.New()
+
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)
 	e.HTTPErrorHandler = handler.ErrHandler
@@ -58,18 +62,18 @@ func main() {
 	e.PUT("/users/:user_id/incomes/:id", incH.Update)
 	e.DELETE("/users/:user_id/incomes/:id", incH.Delete)
 
-	//fs := http.FileServer(http.Dir("./web/assets/"))
-	//r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
-	//
-	//r.HandleFunc("/", func(ctx echo.Context) {
-	//	t, _ := template.ParseFiles("./web/pages-login.html")
-	//	t.Execute(w, nil)
-	//})
-	//
-	//r.HandleFunc("/register", func(ctx echo.Context) {
-	//	t, _ := template.ParseFiles("./web/pages-register.html")
-	//	t.Execute(w, nil)
-	//})
+	// fs := http.FileServer(http.Dir("./web/assets/"))
+	// r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
+
+	// r.HandleFunc("/", func(ctx echo.Context) {
+	// 	t, _ := template.ParseFiles("./web/pages-login.html")
+	// 	t.Execute(w, nil)
+	// })
+
+	// r.HandleFunc("/register", func(ctx echo.Context) {
+	// 	t, _ := template.ParseFiles("./web/pages-register.html")
+	// 	t.Execute(w, nil)
+	// })
 
 	e.Logger.Fatal(e.Start(":8000"))
 }
