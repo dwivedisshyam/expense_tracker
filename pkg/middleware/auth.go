@@ -47,7 +47,6 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		t, err := jwt.ParseWithClaims(authToken, claims, func(t *jwt.Token) (interface{}, error) {
 			return key, nil
 		})
-
 		if err != nil {
 			ctx.Logger().Error(err)
 

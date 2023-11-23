@@ -30,7 +30,6 @@ func getConfig() *DBConfig {
 		DBName:   os.Getenv("DB_NAME"),
 		User:     os.Getenv("DB_USER"),
 	}
-
 }
 
 func New() *DB {
