@@ -59,7 +59,6 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		id := strconv.Itoa(int(claims.ID))
-
 		if id != ctx.Param("user_id") {
 			return errors.Unauthorized("un-authorized request")
 		}
