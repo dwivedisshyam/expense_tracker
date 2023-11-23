@@ -1,6 +1,8 @@
 package service
 
 import (
+	"crypto/sha512"
+	"fmt"
 	"os"
 	"time"
 
@@ -22,11 +24,18 @@ func NewUser(s store.User) User {
 	return &userSvc{store: s}
 }
 
+func hashPassowrd(password string) string {
+	hash := sha512.Sum512([]byte(password))
+
+	return fmt.Sprintf("%x", hash)
+}
+
 func (us *userSvc) Create(user *model.User) (*model.User, error) {
-	// TODO: Hash password
 	if err := user.Validate(); err != nil {
 		return nil, err
 	}
+
+	user.Password = hashPassowrd(user.Password)
 
 	user, err := us.store.Create(user)
 	if err != nil {
@@ -62,7 +71,12 @@ func (us *userSvc) Delete(user *model.User) error {
 }
 
 func (us *userSvc) Login(user *model.User) (string, error) {
-	user, err := us.store.Get(&model.UserFilter{Email: user.Email})
+	u, err := us.store.Get(&model.UserFilter{Email: user.Email})
+	if err != nil {
+		return "", err
+	}
+
+	err = validatePassword(user.Password, u.Password)
 	if err != nil {
 		return "", err
 	}
@@ -74,8 +88,8 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		model.Claims{
-			ID:    user.ID,
-			Email: user.Email,
+			ID:    u.ID,
+			Email: u.Email,
 			RegisteredClaims: jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(day)),
 			},
@@ -87,4 +101,14 @@ func (us *userSvc) Login(user *model.User) (string, error) {
 	}
 
 	return s, err
+}
+
+func validatePassword(paswd, hash string) error {
+	hpswd := hashPassowrd(paswd)
+
+	if hpswd != hash {
+		return errors.Unauthenticated("invalid credentials")
+	}
+
+	return nil
 }

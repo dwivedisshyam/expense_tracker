@@ -53,6 +53,7 @@ func New() *DB {
 	log.Println("Connected!")
 
 	runMigration(db)
+	// addDefaultCategories(db)
 
 	return &DB{db}
 }
@@ -99,4 +100,17 @@ func runMigration(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func addDefaultCategories(db *sql.DB) error {
+	_, err := db.Exec(`INSERT INTO public.categories (name,user_id) VALUES
+	('Fuel',NULL),
+	('Food',NULL),
+	('Rent',NULL),
+	('Internet',NULL),
+	('Salary',NULL),
+	('Credit Card Bill',NULL);
+`)
+
+	return err
 }
