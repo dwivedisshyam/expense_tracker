@@ -51,17 +51,10 @@ func (us *categoryStore) Index(f *model.CatFilter) ([]model.Category, error) {
 func (us *categoryStore) Create(cat *model.Category) (*model.Category, error) {
 	q := `INSERT INTO categories (name, user_id) VALUES ($1,$2)`
 
-	result, err := us.db.Exec(q, cat.Name, cat.UserID)
+	_, err := us.db.Exec(q, cat.Name, cat.UserID)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, errors.Unexpected(err.Error())
-	}
-
-	cat.ID = id
 
 	return cat, nil
 }

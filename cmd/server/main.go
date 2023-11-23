@@ -6,12 +6,15 @@ import (
 	"github.com/dwivedisshyam/expense_tracker/pkg/middleware"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
+	"github.com/dwivedisshyam/go-lib/pkg/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
 
 // nolint: funlen
 func main() {
+	config.New()
+
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)
 	e.HTTPErrorHandler = handler.ErrHandler

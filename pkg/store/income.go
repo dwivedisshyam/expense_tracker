@@ -20,17 +20,10 @@ func NewIncome(db *db.DB) Income {
 func (us *incomeStore) Create(i *model.Income) (*model.Income, error) {
 	q := `INSERT INTO incomes (user_id, title, amount, date) VALUES ($1,$2,$3,$4)`
 
-	result, err := us.db.Exec(q, i.UserID, i.Title, i.Amount, i.Date)
+	_, err := us.db.Exec(q, i.UserID, i.Title, i.Amount, i.Date)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, errors.Unexpected(err.Error())
-	}
-
-	i.ID = id
 
 	return i, nil
 }

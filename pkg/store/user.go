@@ -20,17 +20,10 @@ func NewUser(db *db.DB) User {
 func (us *userStore) Create(user *model.User) (*model.User, error) {
 	q := `INSERT INTO users (f_name, l_name, email, password) VALUES ($1,$2,$3,$4)`
 
-	result, err := us.db.Exec(q, user.FName, user.LName, user.Email, user.Password)
+	_, err := us.db.Exec(q, user.FName, user.LName, user.Email, user.Password)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, errors.Unexpected(err.Error())
-	}
-
-	user.ID = id
 
 	return user, nil
 }

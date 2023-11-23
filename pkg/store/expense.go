@@ -50,17 +50,10 @@ func (us *expStore) Index(f *model.ExpFilter) ([]model.Expense, error) {
 func (us *expStore) Create(e *model.Expense) (*model.Expense, error) {
 	q := `INSERT INTO expenses (user_id, title, amount,category_id,due_date,is_paid) VALUES ($1,$2,$3,$4,$5,$6)`
 
-	result, err := us.db.Exec(q, e.UserID, e.Title, e.Amount, e.CategoryID, e.DueDate, e.Paid)
+	_, err := us.db.Exec(q, e.UserID, e.Title, e.Amount, e.CategoryID, e.DueDate, e.Paid)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, errors.Unexpected(err.Error())
-	}
-
-	e.ID = id
 
 	return e, nil
 }
