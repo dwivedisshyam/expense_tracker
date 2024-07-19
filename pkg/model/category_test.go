@@ -28,7 +28,8 @@ func Test_CategoryValidate(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
+	for _, tt := range tcs {
+		tc := tt
 		t.Run(tc.Name, func(t *testing.T) {
 			actual := tc.category.Validate()
 

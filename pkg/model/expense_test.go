@@ -30,7 +30,8 @@ func Test_ExpenseValidate(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
+	for _, tt := range tcs {
+		tc := tt
 		t.Run(tc.name, func(t *testing.T) {
 			actual := tc.exp.Validate()
 
