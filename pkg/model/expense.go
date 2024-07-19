@@ -19,7 +19,7 @@ func (e Expense) Validate() error {
 		params = append(params, "title")
 	}
 
-	if e.Amount < 0 {
+	if e.Amount <= 0 {
 		params = append(params, "amount")
 	}
 

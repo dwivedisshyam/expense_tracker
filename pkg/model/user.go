@@ -1,6 +1,6 @@
 package model
 
-import "github.com/dwivedisshyam/go-lib/pkg/errors"
+import "gofr.dev/pkg/gofr/http"
 
 type User struct {
 	ID        string `bson:"id" json:"id"`
@@ -12,20 +12,25 @@ type User struct {
 }
 
 func (u User) Validate() error {
+	var params []string
 	if u.FirstName == "" {
-		return errors.Validation("first_name missing")
+		params = append(params, "first_name")
 	}
 
 	if u.LastName == "" {
-		return errors.Validation("last_name missing")
+		params = append(params, "last_name")
 	}
 
 	if u.Email == "" {
-		return errors.Validation("email missing")
+		params = append(params, "email")
 	}
 
 	if u.Password == "" {
-		return errors.Validation("password missing")
+		params = append(params, "password")
+	}
+
+	if len(params) > 0 {
+		return http.ErrorMissingParam{Params: params}
 	}
 
 	return nil
