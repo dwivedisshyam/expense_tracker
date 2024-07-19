@@ -9,8 +9,7 @@ import (
 	"gofr.dev/pkg/gofr"
 )
 
-type categoryStore struct {
-}
+type categoryStore struct{}
 
 func NewCategory() Category {
 	return &categoryStore{}
@@ -29,6 +28,7 @@ func (us *categoryStore) Index(ctx *gofr.Context, f *model.CategoryFilter) ([]mo
 
 func (us *categoryStore) Create(ctx *gofr.Context, cat *model.Category) (*model.Category, error) {
 	cat.ID = calculateNewID(time.Now())
+
 	_, err := ctx.Mongo.InsertOne(ctx, CollectionCategory, cat)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())

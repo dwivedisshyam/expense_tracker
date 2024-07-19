@@ -11,6 +11,7 @@ import (
 	"gofr.dev/pkg/gofr/datasource/mongo"
 )
 
+// nolint: funlen
 func main() {
 	app := gofr.New()
 
@@ -75,28 +76,29 @@ func main() {
 	app.UseMiddleware(middleware.Authentication(jwtKey))
 
 	app.Run()
-
-	// incomeStore := storapp.NewIncome(db)
-
-	// incomeSvc := servicapp.NewIncome(incomeStore)
-
-	// incH := handler.NewIncome(incomeSvc)
-
-	// app.POST("/users/{user_id}/incomes", incH.Create)
-	// app.GET("/users/{user_id}/incomes/:id", incH.Get)
-	// app.PUT("/users/{user_id}/incomes/:id", incH.Update)
-	// app.DELETE("/users/{user_id}/incomes/:id", incH.Delete)
-
-	// fs := http.FileServer(http.Dir("./web/assets/"))
-	// r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
-
-	// r.HandleFunc("/", func(ctx echo.Context) {
-	// 	t, _ := templatapp.ParseFiles("./web/pages-login.html")
-	// 	t.Execute(w, nil)
-	// })
-
-	// r.HandleFunc("/register", func(ctx echo.Context) {
-	// 	t, _ := templatapp.ParseFiles("./web/pages-register.html")
-	// 	t.Execute(w, nil)
-	// })
 }
+
+// incomeStore := storapp.NewIncome(db)
+
+// incomeSvc := servicapp.NewIncome(incomeStore)
+
+// incH := handler.NewIncome(incomeSvc)
+
+// app.POST("/users/{user_id}/incomes", incH.Create)
+// app.GET("/users/{user_id}/incomes/:id", incH.Get)
+// app.PUT("/users/{user_id}/incomes/:id", incH.Update)
+// app.DELETE("/users/{user_id}/incomes/:id", incH.Delete)
+
+// fs := http.FileServer(http.Dir("./web/assets/"))
+// r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
+
+// r.HandleFunc("/", func(ctx echo.Context) {
+// 	t, _ := templatapp.ParseFiles("./web/pages-login.html")
+// 	t.Execute(w, nil)
+// })
+
+// r.HandleFunc("/register", func(ctx echo.Context) {
+// 	t, _ := templatapp.ParseFiles("./web/pages-register.html")
+// 	t.Execute(w, nil)
+// })
+// }

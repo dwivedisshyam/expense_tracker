@@ -22,7 +22,7 @@ func (us *userHandler) Create(ctx *gofr.Context) (any, error) {
 		return nil, errors.BadRequest(err.Error())
 	}
 
-	user,err := us.userSvc.Create(ctx, &u)
+	user, err := us.userSvc.Create(ctx, &u)
 	if err != nil {
 		return nil, err
 	}
@@ -62,6 +62,7 @@ func (us *userHandler) Update(ctx *gofr.Context) (any, error) {
 
 func (us *userHandler) Delete(ctx *gofr.Context) (any, error) {
 	id := ctx.PathParam("user_id")
+
 	err := us.userSvc.Delete(ctx, &model.UserFilter{ID: id})
 	if err != nil {
 		return nil, err

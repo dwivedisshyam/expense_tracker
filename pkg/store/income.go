@@ -1,7 +1,6 @@
 package store
 
-type incomeStore struct {
-}
+type incomeStore struct{}
 
 // func NewIncome(db *db.DB) Income {
 // 	return &incomeStore{db}

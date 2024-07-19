@@ -9,8 +9,7 @@ import (
 	"gofr.dev/pkg/gofr"
 )
 
-type userStore struct {
-}
+type userStore struct{}
 
 func NewUser() User {
 	return &userStore{}
@@ -23,6 +22,7 @@ func (us *userStore) Create(ctx *gofr.Context, user *model.User) (*model.User, e
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
+
 	return user, nil
 }
 
@@ -43,9 +43,11 @@ func (us *userStore) Get(ctx *gofr.Context, f *model.UserFilter) (*model.User, e
 	var user model.User
 
 	m := bson.M{}
+
 	if f.ID != "" {
 		m["id"] = f.ID
 	}
+
 	if f.Email != "" {
 		m["email"] = f.Email
 	}
@@ -63,5 +65,6 @@ func (us *userStore) Delete(ctx *gofr.Context, filter *model.UserFilter) error {
 	if err != nil {
 		return errors.Unexpected(err.Error())
 	}
+
 	return nil
 }

@@ -9,8 +9,7 @@ import (
 	"gofr.dev/pkg/gofr"
 )
 
-type expStore struct {
-}
+type expStore struct{}
 
 func NewExpense() Expense {
 	return &expStore{}
@@ -33,6 +32,7 @@ func (us *expStore) Index(ctx *gofr.Context, f *model.ExpenseFilter) ([]model.Ex
 
 func (us *expStore) Create(ctx *gofr.Context, e *model.Expense) (*model.Expense, error) {
 	e.ID = calculateNewID(time.Now())
+
 	_, err := ctx.Mongo.InsertOne(ctx, CollectionExpense, e)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
@@ -56,6 +56,7 @@ func (us *expStore) Update(ctx *gofr.Context, e *model.Expense) error {
 
 func (us *expStore) Get(ctx *gofr.Context, f *model.ExpenseFilter) (*model.Expense, error) {
 	var e model.Expense
+
 	m := bson.M{
 		"id":      f.ID,
 		"user_id": f.UserID,
@@ -79,5 +80,6 @@ func (us *expStore) Delete(ctx *gofr.Context, f *model.ExpenseFilter) error {
 	if err != nil {
 		return errors.Unexpected(err.Error())
 	}
+
 	return nil
 }

@@ -64,6 +64,7 @@ func (us *catHandler) Update(ctx *gofr.Context) (any, error) {
 
 	id := ctx.PathParam("id")
 	userid := ctx.PathParam("user_id")
+
 	if err := ctx.Bind(&c); err != nil {
 		return nil, err
 	}
@@ -83,11 +84,7 @@ func (us *catHandler) Delete(ctx *gofr.Context) (any, error) {
 	id := ctx.PathParam("id")
 	userid := ctx.PathParam("user_id")
 
-	err := us.catSvc.Delete(ctx, &model.CategoryFilter{
-		ID:     id,
-		UserID: userid,
-	})
-
+	err := us.catSvc.Delete(ctx, &model.CategoryFilter{ID: id, UserID: userid})
 	if err != nil {
 		return nil, err
 	}
