@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
-	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
 	"gofr.dev/pkg/gofr"
 )
 
@@ -22,14 +21,9 @@ func (us *incHandler) Create(ctx *gofr.Context) (any, error) {
 		return nil, err
 	}
 
-	userid, err := utils.ToInt64(ctx.Param("user_id"))
-	if err != nil {
-		return nil, err
-	}
+	c.UserID = ctx.Param("user_id")
 
-	c.UserID = userid
-
-	err = us.incSvc.Create(&c)
+	err := us.incSvc.Create(&c)
 	if err != nil {
 		return nil, err
 	}
@@ -38,15 +32,8 @@ func (us *incHandler) Create(ctx *gofr.Context) (any, error) {
 }
 
 func (us *incHandler) Get(ctx *gofr.Context) (any, error) {
-	id, err := utils.ToInt64(ctx.Param("id"))
-	if err != nil {
-		return nil, err
-	}
-
-	userid, err := utils.ToInt64(ctx.Param("user_id"))
-	if err != nil {
-		return nil, err
-	}
+	id := ctx.Param("id")
+	userid := ctx.Param("user_id")
 
 	income, err := us.incSvc.Get(&model.Income{ID: id, UserID: userid})
 	if err != nil {
@@ -59,24 +46,14 @@ func (us *incHandler) Get(ctx *gofr.Context) (any, error) {
 func (us *incHandler) Update(ctx *gofr.Context) (any, error) {
 	var c model.Income
 
-	id, err := utils.ToInt64(ctx.Param("id"))
-	if err != nil {
-		return nil, err
-	}
-
-	userid, err := utils.ToInt64(ctx.Param("use_id"))
-	if err != nil {
-		return nil, err
-	}
+	c.ID = ctx.Param("id")
+	c.UserID = ctx.Param("user_id")
 
 	if err := ctx.Bind(&c); err != nil {
 		return nil, err
 	}
 
-	c.ID = id
-	c.UserID = userid
-
-	err = us.incSvc.Update(&c)
+	err := us.incSvc.Update(&c)
 	if err != nil {
 		return nil, err
 	}
@@ -85,17 +62,10 @@ func (us *incHandler) Update(ctx *gofr.Context) (any, error) {
 }
 
 func (us *incHandler) Delete(ctx *gofr.Context) (any, error) {
-	id, err := utils.ToInt64(ctx.Param("id"))
-	if err != nil {
-		return nil, err
-	}
+	id := ctx.Param("id")
+	userid := ctx.Param("user_id")
 
-	userid, err := utils.ToInt64(ctx.Param("use_id"))
-	if err != nil {
-		return nil, err
-	}
-
-	err = us.incSvc.Delete(&model.Income{ID: id, UserID: userid})
+	err := us.incSvc.Delete(&model.Income{ID: id, UserID: userid})
 	if err != nil {
 		return nil, err
 	}
