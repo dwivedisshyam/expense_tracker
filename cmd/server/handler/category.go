@@ -37,7 +37,6 @@ func (us *catHandler) Create(ctx *gofr.Context) (any, error) {
 	}
 
 	userid := ctx.PathParam("user_id")
-
 	c.UserID = userid
 
 	newCat, err := us.catSvc.Create(ctx, &c)
@@ -82,7 +81,6 @@ func (us *catHandler) Update(ctx *gofr.Context) (any, error) {
 
 func (us *catHandler) Delete(ctx *gofr.Context) (any, error) {
 	id := ctx.PathParam("id")
-
 	userid := ctx.PathParam("user_id")
 
 	err := us.catSvc.Delete(ctx, &model.CategoryFilter{

@@ -19,10 +19,18 @@ func (us *categorySvc) Index(ctx *gofr.Context, f *model.CategoryFilter) ([]mode
 }
 
 func (us *categorySvc) Create(ctx *gofr.Context, cat *model.Category) (*model.Category, error) {
+	if err := cat.Validate(); err != nil {
+		return nil, err
+	}
+
 	return us.store.Create(ctx, cat)
 }
 
 func (us *categorySvc) Update(ctx *gofr.Context, cat *model.Category) error {
+	if err := cat.Validate(); err != nil {
+		return err
+	}
+
 	return us.store.Update(ctx, cat)
 }
 

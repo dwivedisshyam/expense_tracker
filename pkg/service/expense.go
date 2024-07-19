@@ -19,10 +19,18 @@ func (us *expSvc) Index(ctx *gofr.Context, f *model.ExpenseFilter) ([]model.Expe
 }
 
 func (us *expSvc) Create(ctx *gofr.Context, exp *model.Expense) (*model.Expense, error) {
+	if err := exp.Validate(); err != nil {
+		return nil, err
+	}
+
 	return us.store.Create(ctx, exp)
 }
 
 func (us *expSvc) Update(ctx *gofr.Context, exp *model.Expense) error {
+	if err := exp.Validate(); err != nil {
+		return err
+	}
+
 	return us.store.Update(ctx, exp)
 }
 
