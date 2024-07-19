@@ -1,12 +1,9 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
-	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
-	"github.com/labstack/echo/v4"
+	"gofr.dev/pkg/gofr"
 )
 
 type catHandler struct {
@@ -17,112 +14,85 @@ func NewCategory(s service.Category) catHandler {
 	return catHandler{catSvc: s}
 }
 
-func (us *catHandler) Index(ctx echo.Context) error {
-	var f model.CatFilter
+func (us *catHandler) Index(ctx *gofr.Context) (any, error) {
+	var f model.CategoryFilter
 
-	userid, err := utils.ToInt64(ctx.Param("user_id"))
-	if err != nil {
-		return err
-	}
+	userid := ctx.PathParam("user_id")
 
 	f.UserID = userid
 
-	cats, err := us.catSvc.Index(&f)
+	cats, err := us.catSvc.Index(ctx, &f)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusOK, cats)
+	return cats, nil
 }
 
-func (us *catHandler) Create(ctx echo.Context) error {
+func (us *catHandler) Create(ctx *gofr.Context) (any, error) {
 	var c model.Category
 
 	if err := ctx.Bind(&c); err != nil {
-		return err
+		return nil, err
 	}
 
-	userid, err := utils.ToInt64(ctx.Param("user_id"))
-	if err != nil {
-		return err
-	}
+	userid := ctx.PathParam("user_id")
 
 	c.UserID = userid
 
-	cat, err := us.catSvc.Create(&c)
+	err := us.catSvc.Create(ctx, &c)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusCreated, cat)
+	return nil, nil
 }
 
-func (us *catHandler) Get(ctx echo.Context) error {
-	id, err := utils.ToInt64(ctx.Param("id"))
+func (us *catHandler) Get(ctx *gofr.Context) (any, error) {
+	id := ctx.PathParam("id")
+	userid := ctx.PathParam("user_id")
+
+	cat, err := us.catSvc.Get(ctx, &model.CategoryFilter{ID: id, UserID: userid})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	userid, err := utils.ToInt64(ctx.Param("user_id"))
-	if err != nil {
-		return err
-	}
-
-	user, err := us.catSvc.Get(&model.Category{ID: id, UserID: userid})
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusOK, user)
+	return cat, nil
 }
 
-func (us *catHandler) Update(ctx echo.Context) error {
+func (us *catHandler) Update(ctx *gofr.Context) (any, error) {
 	var c model.Category
 
-	id, err := utils.ToInt64(ctx.Param("id"))
-	if err != nil {
-		return err
-	}
-
-	userid, err := utils.ToInt64(ctx.Param("user_id"))
-	if err != nil {
-		return err
-	}
-
+	id := ctx.PathParam("id")
+	userid := ctx.PathParam("user_id")
 	if err := ctx.Bind(&c); err != nil {
-		return err
+		return nil, err
 	}
 
 	c.ID = id
 	c.UserID = userid
 
-	user, err := us.catSvc.Update(&c)
+	err := us.catSvc.Update(ctx, &c)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusOK, user)
+	return nil, nil
 }
 
-func (us *catHandler) Delete(ctx echo.Context) error {
-	id, err := utils.ToInt64(ctx.Param("id"))
-	if err != nil {
-		return err
-	}
+func (us *catHandler) Delete(ctx *gofr.Context) (any, error) {
+	id := ctx.PathParam("id")
 
-	userid, err := utils.ToInt64(ctx.Param("user_id"))
-	if err != nil {
-		return err
-	}
+	userid := ctx.PathParam("user_id")
 
-	err = us.catSvc.Delete(&model.Category{
+	err := us.catSvc.Delete(ctx, &model.Category{
 		ID:     id,
 		UserID: userid,
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusNoContent, nil)
+	return nil, nil
 }

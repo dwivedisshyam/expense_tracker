@@ -1,56 +1,39 @@
 package store
 
 import (
-	"database/sql"
-	goErr "errors"
+	"time"
 
-	"github.com/dwivedisshyam/expense_tracker/db"
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/go-lib/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"gofr.dev/pkg/gofr"
 )
 
 type expStore struct {
-	db *db.DB
 }
 
-func NewExpense(db *db.DB) Expense {
-	return &expStore{db}
+func NewExpense() Expense {
+	return &expStore{}
 }
 
-func (us *expStore) Index(f *model.ExpFilter) ([]model.Expense, error) {
+func (us *expStore) Index(ctx *gofr.Context, f *model.ExpenseFilter) ([]model.Expense, error) {
 	var exps []model.Expense
 
-	c, args := clause(f)
+	m := bson.M{
+		"user_id": f.UserID,
+	}
 
-	q := `SELECT id,title,amount,due_date,category_id,is_paid FROM expenses WHERE ` + c
-
-	rows, err := us.db.Query(q, args...)
+	err := ctx.Mongo.Find(ctx, CollectionExpense, m, &exps)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
-	}
-
-	for rows.Next() {
-		var e model.Expense
-
-		err = rows.Scan(&e.ID, &e.Title, &e.Amount, &e.DueDate, &e.CategoryID, &e.Paid)
-		if err != nil {
-			return nil, errors.Unexpected(err.Error())
-		}
-
-		exps = append(exps, e)
-	}
-
-	if rows.Err() != nil {
-		return nil, errors.Unexpected("DB Error")
 	}
 
 	return exps, nil
 }
 
-func (us *expStore) Create(e *model.Expense) (*model.Expense, error) {
-	q := `INSERT INTO expenses (user_id, title, amount,category_id,due_date,is_paid) VALUES ($1,$2,$3,$4,$5,$6)`
-
-	_, err := us.db.Exec(q, e.UserID, e.Title, e.Amount, e.CategoryID, e.DueDate, e.Paid)
+func (us *expStore) Create(ctx *gofr.Context, e *model.Expense) (*model.Expense, error) {
+	e.ID = calculateNewID(time.Now())
+	_, err := ctx.Mongo.InsertOne(ctx, CollectionExpense, e)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
@@ -58,36 +41,12 @@ func (us *expStore) Create(e *model.Expense) (*model.Expense, error) {
 	return e, nil
 }
 
-func (us *expStore) Update(e *model.Expense) (*model.Expense, error) {
-	q := `UPDATE expenses set title=$1, amount=$2,due_date=$3, category_id=$4, is_paid=$5 WHERE id=$6 AND user_id=$7`
-
-	_, err := us.db.Exec(q, e.Title, e.Amount, e.DueDate, e.CategoryID, e.Paid, e.ID, e.UserID)
-	if err != nil {
-		return nil, errors.Unexpected(err.Error())
+func (us *expStore) Update(ctx *gofr.Context, e *model.Expense) error {
+	update := bson.M{
+		"$set": e,
 	}
 
-	return e, nil
-}
-
-func (us *expStore) Get(e *model.Expense) (*model.Expense, error) {
-	q := `SELECT title,amount,due_date,category_id,is_paid FROM expenses WHERE id=$1 AND user_id=$2`
-
-	err := us.db.QueryRow(q, e.ID, e.UserID).Scan(&e.Title, &e.Amount, &e.DueDate, &e.CategoryID, &e.Paid)
-	if err != nil {
-		if goErr.Is(err, sql.ErrNoRows) {
-			return nil, errors.NotFound("user not found")
-		}
-
-		return nil, errors.Unexpected(err.Error())
-	}
-
-	return e, nil
-}
-
-func (us *expStore) Delete(e *model.Expense) error {
-	q := `DELETE FROM expenses WHERE id=$1 AND user_id=$2`
-
-	_, err := us.db.Exec(q, e.ID, e.UserID)
+	err := ctx.Mongo.UpdateOne(ctx, CollectionExpense, bson.M{"id": e.ID, "user_id": e.UserID}, update)
 	if err != nil {
 		return errors.Unexpected(err.Error())
 	}
@@ -95,16 +54,30 @@ func (us *expStore) Delete(e *model.Expense) error {
 	return nil
 }
 
-func clause(f *model.ExpFilter) (c string, args []interface{}) {
-	c = `user_id=$1 `
-
-	args = append(args, f.UserID)
-
-	if f.StartDate != "" && f.EndDate != "" {
-		c += `AND (due_date BETWEEN $2 AND $3) `
-
-		args = append(args, f.StartDate, f.EndDate+" 23:59:59")
+func (us *expStore) Get(ctx *gofr.Context, f *model.ExpenseFilter) (*model.Expense, error) {
+	var e model.Expense
+	m := bson.M{
+		"id":      f.ID,
+		"user_id": f.UserID,
 	}
 
-	return
+	err := ctx.Mongo.FindOne(ctx, CollectionExpense, m, &e)
+	if err != nil {
+		return nil, errors.Unexpected(err.Error())
+	}
+
+	return &e, nil
+}
+
+func (us *expStore) Delete(ctx *gofr.Context, f *model.ExpenseFilter) error {
+	m := bson.M{
+		"id":      f.ID,
+		"user_id": f.UserID,
+	}
+
+	_, err := ctx.Mongo.DeleteOne(ctx, CollectionExpense, m)
+	if err != nil {
+		return errors.Unexpected(err.Error())
+	}
+	return nil
 }

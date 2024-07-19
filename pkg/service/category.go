@@ -3,32 +3,33 @@ package service
 import (
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
+	"gofr.dev/pkg/gofr"
 )
 
 type categorySvc struct {
 	store store.Category
 }
 
-func NewCategory(s store.Category) Category {
-	return &categorySvc{store: s}
+func NewCategory(store store.Category) Category {
+	return &categorySvc{store: store}
 }
 
-func (us *categorySvc) Index(f *model.CatFilter) ([]model.Category, error) {
-	return us.store.Index(f)
+func (us *categorySvc) Index(ctx *gofr.Context, f *model.CategoryFilter) ([]model.Category, error) {
+	return us.store.Index(ctx, f)
 }
 
-func (us *categorySvc) Create(cat *model.Category) (*model.Category, error) {
-	return us.store.Create(cat)
+func (us *categorySvc) Create(ctx *gofr.Context, cat *model.Category) error {
+	return us.store.Create(ctx, cat)
 }
 
-func (us *categorySvc) Update(cat *model.Category) (*model.Category, error) {
-	return us.store.Update(cat)
+func (us *categorySvc) Update(ctx *gofr.Context, cat *model.Category) error {
+	return us.store.Update(ctx, cat)
 }
 
-func (us *categorySvc) Get(cat *model.Category) (*model.Category, error) {
-	return us.store.Get(cat)
+func (us *categorySvc) Get(ctx *gofr.Context, filter *model.CategoryFilter) (*model.Category, error) {
+	return us.store.Get(ctx, filter)
 }
 
-func (us *categorySvc) Delete(cat *model.Category) error {
-	return us.store.Delete(cat)
+func (us *categorySvc) Delete(ctx *gofr.Context, cat *model.Category) error {
+	return us.store.Delete(ctx, cat)
 }

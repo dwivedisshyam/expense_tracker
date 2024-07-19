@@ -1,11 +1,12 @@
 package model
 
 type Category struct {
-	ID     int64  `json:"id"`
-	UserID int64  `json:"user_id"`
-	Name   string `json:"name"`
+	ID     string `bson:"id" json:"id"`
+	UserID string `bson:"user_id" json:"user_id"`
+	Name   string `bson:"name" json:"name"`
 }
 
-type CatFilter struct {
-	UserID int64
+type CategoryFilter struct {
+	ID     string
+	UserID string
 }

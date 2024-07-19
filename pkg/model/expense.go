@@ -1,17 +1,18 @@
 package model
 
 type Expense struct {
-	ID         int64   `json:"id"`
-	UserID     int64   `json:"-"`
-	CategoryID int64   `json:"category_id"`
-	Title      string  `json:"title"`
-	Amount     float64 `json:"amount"`
-	DueDate    string  `json:"due_date"`
-	Paid       bool    `json:"paid"`
+	ID         string  `bson:"id" json:"id"`
+	UserID     string  `bson:"user_id" json:"user_id"`
+	CategoryID string  `bson:"category_id" json:"category_id"`
+	Title      string  `bson:"title" json:"title"`
+	Amount     float64 `bson:"amount" json:"amount"`
+	Date       string  `bson:"due_date" json:"due_date"`
+	Paid       bool    `bson:"paid" json:"paid"`
 }
 
-type ExpFilter struct {
-	UserID    int64
+type ExpenseFilter struct {
+	ID        string
+	UserID    string
 	StartDate string
 	EndDate   string
 }
