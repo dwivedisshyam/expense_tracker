@@ -1,79 +1,104 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/dwivedisshyam/expense_tracker/cmd/server/handler"
-	"github.com/dwivedisshyam/expense_tracker/db"
 	"github.com/dwivedisshyam/expense_tracker/pkg/middleware"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
 	"github.com/dwivedisshyam/expense_tracker/pkg/store"
-	"github.com/dwivedisshyam/go-lib/pkg/config"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
+	"gofr.dev/pkg/gofr"
+	"gofr.dev/pkg/gofr/datasource/mongo"
 )
 
 // nolint: funlen
 func main() {
-	config.New()
+	app := gofr.New()
 
-	e := echo.New()
-	e.Logger.SetLevel(log.INFO)
-	e.HTTPErrorHandler = handler.ErrHandler
+	mongoPort, err := strconv.Atoi(app.Config.Get("MONGO_PORT"))
+	if err != nil {
+		app.Logger().Fatalf("missing env %q", "MONGO_PORT")
+		return
+	}
 
-	e.Use(middleware.Auth)
+	mongoCfg := mongo.Config{
+		Host:     app.Config.Get("MONGO_HOST"),
+		User:     app.Config.Get("MONGO_USER"),
+		Password: app.Config.Get("MONGO_PASSWORD"),
+		Port:     mongoPort,
+		Database: app.Config.Get("MONGO_DB"),
+	}
 
-	db := db.New()
+	jwtKey := app.Config.Get("JWT_KEY")
+	if jwtKey == "" {
+		app.Logger().Fatalf("missing env %q", "JWT_KEY")
+		return
+	}
 
-	userStore := store.NewUser(db)
-	expStore := store.NewExpense(db)
-	catStore := store.NewCategory(db)
-	incomeStore := store.NewIncome(db)
+	db := mongo.New(mongoCfg)
 
-	userSvc := service.NewUser(userStore)
+	app.AddMongo(db)
+	// Store
+	userStore := store.NewUser()
+	catStore := store.NewCategory()
+	expStore := store.NewExpense()
+
+	// Service
+	userSvc := service.NewUser(jwtKey, userStore)
 	catSvc := service.NewCategory(catStore)
 	expSvc := service.NewExpense(expStore)
-	incomeSvc := service.NewIncome(incomeStore)
 
+	// Handler
 	userH := handler.NewUser(userSvc)
 	catH := handler.NewCategory(catSvc)
 	expH := handler.NewExpense(expSvc)
-	incH := handler.NewIncome(incomeSvc)
 
-	e.POST("/login", handler.Handler(userH.Login))
+	app.POST("/login", userH.Login)
 
-	e.POST("/users", handler.Handler(userH.Create))
-	e.GET("/users/:user_id", handler.Handler(userH.Get))
-	e.PUT("/users/:user_id", handler.Handler(userH.Update))
-	e.DELETE("/users/:user_id", handler.Handler(userH.Delete))
+	app.POST("/users", userH.Create)
+	app.GET("/users/{user_id}", userH.Get)
+	app.PUT("/users/{user_id}", userH.Update)
+	app.DELETE("/users/{user_id}", userH.Delete)
 
-	e.POST("/users/:user_id/categories", catH.Create)
-	e.GET("/users/:user_id/categories", catH.Index)
-	e.GET("/users/:user_id/categories/:id", catH.Get)
-	e.PUT("/users/:user_id/categories/:id", catH.Update)
-	e.DELETE("/users/:user_id/categories/:id", catH.Delete)
+	app.GET("/users/{user_id}/categories", catH.Index)
+	app.POST("/users/{user_id}/categories", catH.Create)
+	app.GET("/users/{user_id}/categories/{id}", catH.Get)
+	app.PUT("/users/{user_id}/categories/{id}", catH.Update)
+	app.DELETE("/users/{user_id}/categories/{id}", catH.Delete)
 
-	e.POST("/users/:user_id/expenses", expH.Create)
-	e.GET("/users/:user_id/expenses", expH.Index)
-	e.GET("/users/:user_id/expenses/:id", expH.Get)
-	e.PUT("/users/:user_id/expenses/:id", expH.Update)
-	e.DELETE("/users/:user_id/expenses/:id", expH.Delete)
+	app.POST("/users/{user_id}/expenses", expH.Create)
+	app.GET("/users/{user_id}/expenses", expH.Index)
+	app.GET("/users/{user_id}/expenses/{id}", expH.Get)
+	app.PUT("/users/{user_id}/expenses/{id}", expH.Update)
+	app.DELETE("/users/{user_id}/expenses/{id}", expH.Delete)
 
-	e.POST("/users/:user_id/incomes", incH.Create)
-	e.GET("/users/:user_id/incomes/:id", incH.Get)
-	e.PUT("/users/:user_id/incomes/:id", incH.Update)
-	e.DELETE("/users/:user_id/incomes/:id", incH.Delete)
+	// middleware
+	app.UseMiddleware(middleware.Authentication(jwtKey))
 
-	// fs := http.FileServer(http.Dir("./web/assets/"))
-	// r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
-
-	// r.HandleFunc("/", func(ctx echo.Context) {
-	// 	t, _ := template.ParseFiles("./web/pages-login.html")
-	// 	t.Execute(w, nil)
-	// })
-
-	// r.HandleFunc("/register", func(ctx echo.Context) {
-	// 	t, _ := template.ParseFiles("./web/pages-register.html")
-	// 	t.Execute(w, nil)
-	// })
-
-	e.Logger.Fatal(e.Start(":8000"))
+	app.Run()
 }
+
+// incomeStore := storapp.NewIncome(db)
+
+// incomeSvc := servicapp.NewIncome(incomeStore)
+
+// incH := handler.NewIncome(incomeSvc)
+
+// app.POST("/users/{user_id}/incomes", incH.Create)
+// app.GET("/users/{user_id}/incomes/:id", incH.Get)
+// app.PUT("/users/{user_id}/incomes/:id", incH.Update)
+// app.DELETE("/users/{user_id}/incomes/:id", incH.Delete)
+
+// fs := http.FileServer(http.Dir("./web/assets/"))
+// r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
+
+// r.HandleFunc("/", func(ctx echo.Context) {
+// 	t, _ := templatapp.ParseFiles("./web/pages-login.html")
+// 	t.Execute(w, nil)
+// })
+
+// r.HandleFunc("/register", func(ctx echo.Context) {
+// 	t, _ := templatapp.ParseFiles("./web/pages-register.html")
+// 	t.Execute(w, nil)
+// })
+// }

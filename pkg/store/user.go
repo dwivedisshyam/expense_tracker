@@ -1,26 +1,24 @@
 package store
 
 import (
-	"database/sql"
-	goErr "errors"
+	"time"
 
-	"github.com/dwivedisshyam/expense_tracker/db"
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/go-lib/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"gofr.dev/pkg/gofr"
 )
 
-type userStore struct {
-	db *db.DB
+type userStore struct{}
+
+func NewUser() User {
+	return &userStore{}
 }
 
-func NewUser(db *db.DB) User {
-	return &userStore{db}
-}
+func (us *userStore) Create(ctx *gofr.Context, user *model.User) (*model.User, error) {
+	user.ID = calculateNewID(time.Now())
 
-func (us *userStore) Create(user *model.User) (*model.User, error) {
-	q := `INSERT INTO users (f_name, l_name, email, password) VALUES ($1,$2,$3,$4)`
-
-	_, err := us.db.Exec(q, user.FName, user.LName, user.Email, user.Password)
+	_, err := ctx.Mongo.InsertOne(ctx, CollectionUser, user)
 	if err != nil {
 		return nil, errors.Unexpected(err.Error())
 	}
@@ -28,47 +26,43 @@ func (us *userStore) Create(user *model.User) (*model.User, error) {
 	return user, nil
 }
 
-func (us *userStore) Update(user *model.User) (*model.User, error) {
-	q := `UPDATE users set f_name=$1, l_name=$2, email=$3, password=$4 WHERE id=$5`
-
-	_, err := us.db.Exec(q, user.FName, user.LName, user.Email, user.Password, user.ID)
-	if err != nil {
-		return nil, errors.Unexpected(err.Error())
+func (us *userStore) Update(ctx *gofr.Context, user *model.User) error {
+	update := bson.M{
+		"$set": user,
 	}
 
-	return user, nil
+	err := ctx.Mongo.UpdateOne(ctx, CollectionUser, bson.M{"id": user.ID}, update)
+	if err != nil {
+		return errors.Unexpected(err.Error())
+	}
+
+	return nil
 }
 
-func (us *userStore) Get(f *model.UserFilter) (*model.User, error) {
-	q := `SELECT id,f_name, l_name, email, password FROM users WHERE `
+func (us *userStore) Get(ctx *gofr.Context, f *model.UserFilter) (*model.User, error) {
+	var user model.User
 
-	var identifier any
+	m := bson.M{}
+
+	if f.ID != "" {
+		m["id"] = f.ID
+	}
+
 	if f.Email != "" {
-		identifier = f.Email
-		q += `email=$1`
-	} else {
-		identifier = f.ID
-		q += `id=$1`
+		m["email"] = f.Email
 	}
 
-	user := new(model.User)
-
-	err := us.db.QueryRow(q, identifier).Scan(&user.ID, &user.FName, &user.LName, &user.Email, &user.Password)
+	err := ctx.Mongo.FindOne(ctx, CollectionUser, m, &user)
 	if err != nil {
-		if goErr.Is(err, sql.ErrNoRows) {
-			return nil, errors.NotFound("user not found")
-		}
-
 		return nil, errors.Unexpected(err.Error())
 	}
 
-	return user, nil
+	return &user, nil
 }
 
-func (us *userStore) Delete(user *model.User) error {
-	q := `DELETE FROM users WHERE id=$1`
-
-	if _, err := us.db.Exec(q, user.ID); err != nil {
+func (us *userStore) Delete(ctx *gofr.Context, filter *model.UserFilter) error {
+	_, err := ctx.Mongo.DeleteOne(ctx, CollectionUser, bson.M{"id": filter.ID})
+	if err != nil {
 		return errors.Unexpected(err.Error())
 	}
 

@@ -1,15 +1,15 @@
 package middleware
 
 import (
-	"log"
-	"os"
-	"strconv"
+	"encoding/json"
+	"net/http"
 	"strings"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/go-lib/pkg/errors"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
+	"github.com/gorilla/mux"
+	gofrHTTP "gofr.dev/pkg/gofr/http"
 )
 
 func exemptPath(path string) bool {
@@ -22,47 +22,51 @@ func exemptPath(path string) bool {
 	return ok
 }
 
-func Auth(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(ctx echo.Context) error {
-		if exemptPath(ctx.Request().Method + " " + ctx.Path()) {
-			return next(ctx)
-		}
+func Authentication(jwtKey string) gofrHTTP.Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if exemptPath(r.Method + " " + r.URL.Path) {
+				next.ServeHTTP(w, r)
+				return
+			}
 
-		authToken := ctx.Request().Header.Get("Authorization")
-		if authToken == "" {
-			return errors.Unauthenticated("invalid auth token")
-		}
+			authToken := r.Header.Get("Authorization")
+			if authToken == "" {
+				errorResponse(w, errors.Unauthenticated("invalid auth token"))
+				return
+			}
 
-		authToken = strings.TrimPrefix(authToken, "Bearer ")
+			authToken = strings.TrimPrefix(authToken, "Bearer ")
 
-		key := []byte(os.Getenv("JWT_KEY"))
-		if len(key) == 0 {
-			ctx.Logger().Error("JWT_KEY is missing")
+			key := []byte(jwtKey)
+			claims := &model.Claims{}
 
-			return errors.Unauthenticated("invalid auth token")
-		}
+			t, err := jwt.ParseWithClaims(authToken, claims, func(t *jwt.Token) (interface{}, error) {
+				return key, nil
+			})
+			if err != nil {
+				errorResponse(w, errors.Unauthenticated("invalid auth token"))
+				return
+			}
 
-		claims := &model.Claims{}
+			if !t.Valid {
+				errorResponse(w, errors.Unauthenticated("invalid auth token"))
+				return
+			}
 
-		t, err := jwt.ParseWithClaims(authToken, claims, func(t *jwt.Token) (interface{}, error) {
-			return key, nil
+			if claims.ID != mux.Vars(r)["user_id"] {
+				errorResponse(w, errors.Unauthorized("un-authorized request"))
+				return
+			}
+
+			next.ServeHTTP(w, r)
 		})
-		if err != nil {
-			ctx.Logger().Error(err)
-
-			return errors.Unauthenticated("invalid auth token")
-		}
-
-		if !t.Valid {
-			log.Println("invalid token")
-			return errors.Unauthenticated("invalid auth token")
-		}
-
-		id := strconv.Itoa(int(claims.ID))
-		if id != ctx.Param("user_id") {
-			return errors.Unauthorized("un-authorized request")
-		}
-
-		return next(ctx)
 	}
+}
+
+func errorResponse(w http.ResponseWriter, err error) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusUnauthorized)
+
+	json.NewEncoder(w).Encode(map[string]error{"error": err})
 }

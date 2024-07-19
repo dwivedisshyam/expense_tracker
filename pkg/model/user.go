@@ -1,36 +1,42 @@
 package model
 
-import "github.com/dwivedisshyam/go-lib/pkg/errors"
+import "gofr.dev/pkg/gofr/http"
 
 type User struct {
-	ID       int64  `json:"id"`
-	FName    string `json:"f_name"`
-	LName    string `json:"l_name"`
-	Email    string `json:"email"`
-	Password string `json:"password,omitempty"`
+	ID        string `bson:"id" json:"id"`
+	FirstName string `bson:"first_name" json:"first_name"`
+	LastName  string `bson:"last_name" json:"last_name"`
+	Email     string `bson:"email" json:"email"`
+	Password  string `bson:"password" json:"password,omitempty"`
+	// ProjectID string `bson:"project_id" json:"project_id,omitempty"`
 }
 
 func (u User) Validate() error {
-	if u.FName == "" {
-		return errors.Validation("f_name missing")
+	var params []string
+	if u.FirstName == "" {
+		params = append(params, "first_name")
 	}
 
-	if u.LName == "" {
-		return errors.Validation("l_name missing")
+	if u.LastName == "" {
+		params = append(params, "last_name")
 	}
 
 	if u.Email == "" {
-		return errors.Validation("email missing")
+		params = append(params, "email")
 	}
 
 	if u.Password == "" {
-		return errors.Validation("password missing")
+		params = append(params, "password")
+	}
+
+	if len(params) > 0 {
+		return http.ErrorMissingParam{Params: params}
 	}
 
 	return nil
 }
 
 type UserFilter struct {
-	ID    int64
+	ID    string
 	Email string
 }

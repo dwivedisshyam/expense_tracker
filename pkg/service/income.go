@@ -13,11 +13,11 @@ func NewIncome(s store.Income) Income {
 	return &incSvc{store: s}
 }
 
-func (us *incSvc) Create(i *model.Income) (*model.Income, error) {
+func (us *incSvc) Create(i *model.Income) error {
 	return us.store.Create(i)
 }
 
-func (us *incSvc) Update(i *model.Income) (*model.Income, error) {
+func (us *incSvc) Update(i *model.Income) error {
 	return us.store.Update(i)
 }
 

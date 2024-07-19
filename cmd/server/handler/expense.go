@@ -1,12 +1,9 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
 	"github.com/dwivedisshyam/expense_tracker/pkg/service"
-	"github.com/dwivedisshyam/expense_tracker/pkg/utils"
-	"github.com/labstack/echo/v4"
+	"gofr.dev/pkg/gofr"
 )
 
 type expHandler struct {
@@ -17,111 +14,84 @@ func NewExpense(s service.Expense) expHandler {
 	return expHandler{expSvc: s}
 }
 
-func (us *expHandler) Index(ctx echo.Context) error {
-	var c model.ExpFilter
+func (us *expHandler) Index(ctx *gofr.Context) (any, error) {
+	var c model.ExpenseFilter
 
-	userid, err := utils.ToInt64(ctx.Param("use_id"))
-	if err != nil {
-		return err
-	}
+	userID := ctx.PathParam("user_id")
 
 	c.StartDate = ctx.Param("start_date")
 	c.EndDate = ctx.Param("end_date")
 
-	c.UserID = userid
+	c.UserID = userID
 
-	users, err := us.expSvc.Index(&c)
+	exps, err := us.expSvc.Index(ctx, &c)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return ctx.JSON(http.StatusOK, users)
+	return exps, nil
 }
 
-func (us *expHandler) Create(ctx echo.Context) error {
-	var c model.Expense
+func (us *expHandler) Create(ctx *gofr.Context) (any, error) {
+	var exp model.Expense
 
-	if err := ctx.Bind(&c); err != nil {
-		return err
+	if err := ctx.Bind(&exp); err != nil {
+		return nil, err
 	}
 
-	userid, err := utils.ToInt64(ctx.Param("use_id"))
+	userID := ctx.PathParam("user_id")
+
+	exp.UserID = userID
+
+	newExp, err := us.expSvc.Create(ctx, &exp)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	c.UserID = userid
-
-	user, err := us.expSvc.Create(&c)
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusCreated, user)
+	return newExp, nil
 }
 
-func (us *expHandler) Get(ctx echo.Context) error {
-	id, err := utils.ToInt64(ctx.Param("id"))
+func (us *expHandler) Get(ctx *gofr.Context) (any, error) {
+	id := ctx.PathParam("id")
+	userid := ctx.PathParam("user_id")
+
+	exp, err := us.expSvc.Get(ctx, &model.ExpenseFilter{ID: id, UserID: userid})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	userid, err := utils.ToInt64(ctx.Param("use_id"))
-	if err != nil {
-		return err
-	}
-
-	user, err := us.expSvc.Get(&model.Expense{ID: id, UserID: userid})
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusOK, user)
+	return exp, nil
 }
 
-func (us *expHandler) Update(ctx echo.Context) error {
-	var c model.Expense
+func (us *expHandler) Update(ctx *gofr.Context) (any, error) {
+	var exp model.Expense
 
-	id, err := utils.ToInt64(ctx.Param("id"))
+	id := ctx.PathParam("id")
+	userid := ctx.PathParam("user_id")
+
+	if err := ctx.Bind(&exp); err != nil {
+		return nil, err
+	}
+
+	exp.ID = id
+	exp.UserID = userid
+
+	err := us.expSvc.Update(ctx, &exp)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	userid, err := utils.ToInt64(ctx.Param("use_id"))
-	if err != nil {
-		return err
-	}
-
-	if err := ctx.Bind(&c); err != nil {
-		return err
-	}
-
-	c.ID = id
-	c.UserID = userid
-
-	user, err := us.expSvc.Update(&c)
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusOK, user)
+	return nil, nil
 }
 
-func (us *expHandler) Delete(ctx echo.Context) error {
-	id, err := utils.ToInt64(ctx.Param("id"))
+func (us *expHandler) Delete(ctx *gofr.Context) (any, error) {
+	id := ctx.PathParam("id")
+	userid := ctx.PathParam("user_id")
+
+	err := us.expSvc.Delete(ctx, &model.ExpenseFilter{ID: id, UserID: userid})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	userid, err := utils.ToInt64(ctx.Param("use_id"))
-	if err != nil {
-		return err
-	}
-
-	err = us.expSvc.Delete(&model.Expense{ID: id, UserID: userid})
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusNoContent, nil)
+	return nil, nil
 }
