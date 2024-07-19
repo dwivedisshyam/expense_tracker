@@ -8,7 +8,7 @@ import (
 type User interface {
 	Login(ctx *gofr.Context, user *model.User) (string, error)
 
-	Create(ctx *gofr.Context, user *model.User) error
+	Create(ctx *gofr.Context, user *model.User) (*model.User, error)
 	Update(ctx *gofr.Context, user *model.User) error
 	Get(ctx *gofr.Context, user *model.UserFilter) (*model.User, error)
 	Delete(ctx *gofr.Context, user *model.UserFilter) error
@@ -16,10 +16,10 @@ type User interface {
 
 type Category interface {
 	Index(ctx *gofr.Context, f *model.CategoryFilter) ([]model.Category, error)
-	Create(ctx *gofr.Context, user *model.Category) error
+	Create(ctx *gofr.Context, user *model.Category) (*model.Category, error)
 	Update(ctx *gofr.Context, user *model.Category) error
 	Get(ctx *gofr.Context, user *model.CategoryFilter) (*model.Category, error)
-	Delete(ctx *gofr.Context, user *model.Category) error
+	Delete(ctx *gofr.Context, user *model.CategoryFilter) error
 }
 
 type Expense interface {

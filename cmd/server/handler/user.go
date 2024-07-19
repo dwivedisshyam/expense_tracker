@@ -22,12 +22,12 @@ func (us *userHandler) Create(ctx *gofr.Context) (any, error) {
 		return nil, errors.BadRequest(err.Error())
 	}
 
-	err := us.userSvc.Create(ctx, &u)
+	user,err := us.userSvc.Create(ctx, &u)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return user, nil
 }
 
 func (us *userHandler) Get(ctx *gofr.Context) (any, error) {

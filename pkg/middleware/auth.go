@@ -32,7 +32,7 @@ func Authentication(jwtKey string) gofrHTTP.Middleware {
 
 			authToken := r.Header.Get("Authorization")
 			if authToken == "" {
-				respondError(w, errors.Unauthenticated("invalid auth token"))
+				errorResponse(w, errors.Unauthenticated("invalid auth token"))
 				return
 			}
 
@@ -45,17 +45,17 @@ func Authentication(jwtKey string) gofrHTTP.Middleware {
 				return key, nil
 			})
 			if err != nil {
-				respondError(w, errors.Unauthenticated("invalid auth token"))
+				errorResponse(w, errors.Unauthenticated("invalid auth token"))
 				return
 			}
 
 			if !t.Valid {
-				respondError(w, errors.Unauthenticated("invalid auth token"))
+				errorResponse(w, errors.Unauthenticated("invalid auth token"))
 				return
 			}
 
 			if claims.ID != mux.Vars(r)["user_id"] {
-				respondError(w, errors.Unauthorized("un-authorized request"))
+				errorResponse(w, errors.Unauthorized("un-authorized request"))
 				return
 			}
 
@@ -64,7 +64,7 @@ func Authentication(jwtKey string) gofrHTTP.Middleware {
 	}
 }
 
-func respondError(w http.ResponseWriter, err error) {
+func errorResponse(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusUnauthorized)
 

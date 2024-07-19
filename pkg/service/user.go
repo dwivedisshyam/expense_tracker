@@ -34,19 +34,19 @@ func hashPassowrd(password string) string {
 	return fmt.Sprintf("%x", hash)
 }
 
-func (us *userSvc) Create(ctx *gofr.Context, user *model.User) error {
+func (us *userSvc) Create(ctx *gofr.Context, user *model.User) (*model.User, error) {
 	if err := user.Validate(); err != nil {
-		return err
+		return nil, err
 	}
 
 	user.Password = hashPassowrd(user.Password)
 
-	err := us.store.Create(ctx, user)
+	user, err := us.store.Create(ctx, user)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return user, nil
 }
 
 func (us *userSvc) Update(ctx *gofr.Context, user *model.User) error {

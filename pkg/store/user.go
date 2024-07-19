@@ -16,14 +16,14 @@ func NewUser() User {
 	return &userStore{}
 }
 
-func (us *userStore) Create(ctx *gofr.Context, user *model.User) error {
+func (us *userStore) Create(ctx *gofr.Context, user *model.User) (*model.User, error) {
 	user.ID = calculateNewID(time.Now())
 
 	_, err := ctx.Mongo.InsertOne(ctx, CollectionUser, user)
 	if err != nil {
-		return errors.Unexpected(err.Error())
+		return nil, errors.Unexpected(err.Error())
 	}
-	return nil
+	return user, nil
 }
 
 func (us *userStore) Update(ctx *gofr.Context, user *model.User) error {

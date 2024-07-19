@@ -40,12 +40,12 @@ func (us *catHandler) Create(ctx *gofr.Context) (any, error) {
 
 	c.UserID = userid
 
-	err := us.catSvc.Create(ctx, &c)
+	newCat, err := us.catSvc.Create(ctx, &c)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return newCat, nil
 }
 
 func (us *catHandler) Get(ctx *gofr.Context) (any, error) {
@@ -85,7 +85,7 @@ func (us *catHandler) Delete(ctx *gofr.Context) (any, error) {
 
 	userid := ctx.PathParam("user_id")
 
-	err := us.catSvc.Delete(ctx, &model.Category{
+	err := us.catSvc.Delete(ctx, &model.CategoryFilter{
 		ID:     id,
 		UserID: userid,
 	})

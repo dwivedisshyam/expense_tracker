@@ -27,14 +27,14 @@ func (us *categoryStore) Index(ctx *gofr.Context, f *model.CategoryFilter) ([]mo
 	return categories, nil
 }
 
-func (us *categoryStore) Create(ctx *gofr.Context, cat *model.Category) error {
+func (us *categoryStore) Create(ctx *gofr.Context, cat *model.Category) (*model.Category, error) {
 	cat.ID = calculateNewID(time.Now())
 	_, err := ctx.Mongo.InsertOne(ctx, CollectionCategory, cat)
 	if err != nil {
-		return errors.Unexpected(err.Error())
+		return nil, errors.Unexpected(err.Error())
 	}
 
-	return nil
+	return cat, nil
 }
 
 func (us *categoryStore) Update(ctx *gofr.Context, cat *model.Category) error {
@@ -66,7 +66,7 @@ func (us *categoryStore) Get(ctx *gofr.Context, filter *model.CategoryFilter) (*
 	return &category, nil
 }
 
-func (us *categoryStore) Delete(ctx *gofr.Context, cat *model.Category) error {
+func (us *categoryStore) Delete(ctx *gofr.Context, cat *model.CategoryFilter) error {
 	m := bson.M{
 		"id":      cat.ID,
 		"user_id": cat.UserID,

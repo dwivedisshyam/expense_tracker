@@ -18,7 +18,7 @@ func (us *categorySvc) Index(ctx *gofr.Context, f *model.CategoryFilter) ([]mode
 	return us.store.Index(ctx, f)
 }
 
-func (us *categorySvc) Create(ctx *gofr.Context, cat *model.Category) error {
+func (us *categorySvc) Create(ctx *gofr.Context, cat *model.Category) (*model.Category, error) {
 	return us.store.Create(ctx, cat)
 }
 
@@ -30,6 +30,6 @@ func (us *categorySvc) Get(ctx *gofr.Context, filter *model.CategoryFilter) (*mo
 	return us.store.Get(ctx, filter)
 }
 
-func (us *categorySvc) Delete(ctx *gofr.Context, cat *model.Category) error {
+func (us *categorySvc) Delete(ctx *gofr.Context, cat *model.CategoryFilter) error {
 	return us.store.Delete(ctx, cat)
 }
