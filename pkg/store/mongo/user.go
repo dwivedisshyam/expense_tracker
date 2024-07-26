@@ -1,4 +1,4 @@
-package store
+package mongo
 
 import (
 	"time"
@@ -9,14 +9,18 @@ import (
 	"gofr.dev/pkg/gofr"
 )
 
-type userStore struct{}
+type userStore struct {
+	idGen func(time.Time) string
+}
 
-func NewUser() User {
-	return &userStore{}
+func NewUser(idGen func(time.Time) string) *userStore {
+	return &userStore{
+		idGen: idGen,
+	}
 }
 
 func (us *userStore) Create(ctx *gofr.Context, user *model.User) (*model.User, error) {
-	user.ID = calculateNewID(time.Now())
+	user.ID = us.idGen(time.Now())
 
 	_, err := ctx.Mongo.InsertOne(ctx, CollectionUser, user)
 	if err != nil {
