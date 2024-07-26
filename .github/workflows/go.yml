@@ -41,6 +41,18 @@ jobs:
                 echo "Failed"
                 exit 1
             fi
+  build:
+    name: 🛠️ Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version-file: go.mod
+        cache-dependency-path: go.sum
+
   lint:
     name: 🔎 Linter
     runs-on: ubuntu-latest
