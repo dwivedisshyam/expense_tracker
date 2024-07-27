@@ -1,18 +1,21 @@
-package store
+package mongo
 
 import (
 	"time"
 
 	"github.com/dwivedisshyam/expense_tracker/pkg/model"
+
 	"github.com/dwivedisshyam/go-lib/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"gofr.dev/pkg/gofr"
 )
 
-type categoryStore struct{}
+type categoryStore struct {
+	idGen func(time.Time) string
+}
 
-func NewCategory() Category {
-	return &categoryStore{}
+func NewCategory(idGen func(time.Time) string) *categoryStore {
+	return &categoryStore{idGen: idGen}
 }
 
 func (us *categoryStore) Index(ctx *gofr.Context, f *model.CategoryFilter) ([]model.Category, error) {
@@ -27,7 +30,7 @@ func (us *categoryStore) Index(ctx *gofr.Context, f *model.CategoryFilter) ([]mo
 }
 
 func (us *categoryStore) Create(ctx *gofr.Context, cat *model.Category) (*model.Category, error) {
-	cat.ID = calculateNewID(time.Now())
+	cat.ID = us.idGen(time.Now())
 
 	_, err := ctx.Mongo.InsertOne(ctx, CollectionCategory, cat)
 	if err != nil {

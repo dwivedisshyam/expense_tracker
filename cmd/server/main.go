@@ -11,22 +11,28 @@ import (
 	"gofr.dev/pkg/gofr/datasource/mongo"
 )
 
+// ingnoring funlen linter
 // nolint: funlen
 func main() {
 	app := gofr.New()
 
-	mongoPort, err := strconv.Atoi(app.Config.Get("MONGO_PORT"))
-	if err != nil {
-		app.Logger().Fatalf("missing env %q", "MONGO_PORT")
-		return
-	}
-
-	mongoCfg := mongo.Config{
-		Host:     app.Config.Get("MONGO_HOST"),
-		User:     app.Config.Get("MONGO_USER"),
-		Password: app.Config.Get("MONGO_PASSWORD"),
-		Port:     mongoPort,
-		Database: app.Config.Get("MONGO_DB"),
+	if app.Config.Get("DB_TYPE") == "mongo" {
+		dbPort, err := strconv.Atoi(app.Config.Get("DB_PORT"))
+		if err != nil {
+			app.Logger().Fatalf("missing env %q", "DB_PORT")
+			return
+		}
+		mongoCfg := mongo.Config{
+			Host:     app.Config.Get("DB_HOST"),
+			User:     app.Config.Get("DB_USER"),
+			Password: app.Config.Get("DB_PASSWORD"),
+			Port:     dbPort,
+			Database: app.Config.Get("DB_NAME"),
+		}
+		db := mongo.New(mongoCfg)
+		app.AddMongo(db)
+	} else {
+		app.Migrate(store.Migrations())
 	}
 
 	jwtKey := app.Config.Get("JWT_KEY")
@@ -35,13 +41,10 @@ func main() {
 		return
 	}
 
-	db := mongo.New(mongoCfg)
-
-	app.AddMongo(db)
 	// Store
-	userStore := store.NewUser()
-	catStore := store.NewCategory()
-	expStore := store.NewExpense()
+	userStore := store.NewUser(app)
+	catStore := store.NewCategory(app)
+	expStore := store.NewExpense(app)
 
 	// Service
 	userSvc := service.NewUser(jwtKey, userStore)

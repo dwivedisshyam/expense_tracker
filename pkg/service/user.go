@@ -46,6 +46,8 @@ func (us *userSvc) Create(ctx *gofr.Context, user *model.User) (*model.User, err
 		return nil, err
 	}
 
+	user.Password = ""
+
 	return user, nil
 }
 

@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"f_name\": \"Ram\",\n    \"l_name\": \"Kumar\",\n    \"email\": \"ramkumar@gmail.com\",\n    \"password\": \"pasword\"\n}",
+							"raw": "{\n    \"first_name\":\"Mohan\",\n    \"last_name\": \"Dwivedi\",\n    \"email\": \"mohan@gmail.com\",\n    \"password\": \"password\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -41,18 +41,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/users/:id",
+							"raw": "{{url}}/users/:user_id",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"users",
-								":id"
+								":user_id"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "4"
+									"key": "user_id",
+									"value": "dda0089"
 								}
 							]
 						}
@@ -66,7 +66,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"f_name\": \"Shyam\",\n    \"l_name\": \"Kumar\",\n    \"email\": \"ramkumar@gmail.com\",\n    \"password\": \"pasword\"\n}",
+							"raw": "{\n    \"id\": 1,\n    \"first_name\": \"S Shyam\",\n    \"last_name\": \"Dwivedi\",\n    \"email\": \"shyam61174@gmail.com\",\n    \"password\": \"password\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -74,18 +74,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/users/:id",
+							"raw": "{{url}}/users/:user_id",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"users",
-								":id"
+								":user_id"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "4"
+									"key": "user_id",
+									"value": "1"
 								}
 							]
 						}
@@ -98,19 +98,45 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/users/:id",
+							"raw": "{{url}}/users/:user_id",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"users",
-								":id"
+								":user_id"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "4"
+									"key": "user_id",
+									"value": "2"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"mohan@gmail.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"login"
 							]
 						}
 					},
@@ -128,7 +154,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\":\"Bills\"\n}",
+							"raw": "{\n    \"name\":\"Fuel\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -148,7 +174,7 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								}
 							]
 						}
@@ -174,11 +200,11 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								},
 								{
 									"key": "id",
-									"value": "1"
+									"value": "7475999"
 								}
 							]
 						}
@@ -203,7 +229,7 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								}
 							]
 						}
@@ -217,7 +243,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"id\": 1,\n        \"user_id\": 1,\n        \"name\": \"House Rent\"\n    }",
+							"raw": "{\n    \"name\": \"Rent\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -238,11 +264,11 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								},
 								{
 									"key": "id",
-									"value": "1"
+									"value": "7475999"
 								}
 							]
 						}
@@ -291,7 +317,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Credit Card\",\n    \"amount\": 15000,\n    \"category_id\":2,\n    \"due_date\": \"2023-09-15T00:00:00Z\"\n}",
+							"raw": "{\n    \"title\": \"House Rent\",\n    \"amount\": 15000,\n    \"category_id\":\"7475999\",\n    \"due_date\": \"2023-09-15T00:00:00Z\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -311,7 +337,7 @@
 							"variable": [
 								{
 									"key": "users_id",
-									"value": "1"
+									"value": "5ffccc6"
 								}
 							]
 						}
@@ -337,11 +363,11 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								},
 								{
 									"key": "id",
-									"value": "1"
+									"value": "1d033a2"
 								}
 							]
 						}
@@ -354,7 +380,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/users/:user_id/expenses?start_date=2023-09-12&end_date=2023-09-15",
+							"raw": "{{url}}/users/:user_id/expenses",
 							"host": [
 								"{{url}}"
 							],
@@ -366,17 +392,19 @@
 							"query": [
 								{
 									"key": "start_date",
-									"value": "2023-09-12"
+									"value": "2023-09-12",
+									"disabled": true
 								},
 								{
 									"key": "end_date",
-									"value": "2023-09-15"
+									"value": "2023-09-15",
+									"disabled": true
 								}
 							],
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								}
 							]
 						}
@@ -390,7 +418,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"id\": 1,\n        \"category_id\": 1,\n        \"title\": \"Credit Card\",\n        \"amount\": 15000,\n        \"due_date\": \"2023-09-10 00:00:00+00:00\",\n        \"paid\": false\n    }",
+							"raw": "{\n        \"id\": \"1d033a2\",\n        \"user_id\": \"5ffccc6\",\n        \"category_id\": \"d34bf38\",\n        \"title\": \"Credit Card\",\n        \"amount\": 15000,\n        \"due_date\": \"2023-09-15T00:00:00Z\",\n        \"paid\": true\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -411,11 +439,11 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								},
 								{
 									"key": "id",
-									"value": "1"
+									"value": "1d033a2"
 								}
 							]
 						}
@@ -441,11 +469,11 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "1"
+									"value": "5ffccc6"
 								},
 								{
 									"key": "id",
-									"value": "6"
+									"value": "1d033a2"
 								}
 							]
 						}
@@ -593,6 +621,16 @@
 			]
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0X2lkIjoiIiwiaWQiOiJiMjY2NTU0IiwiZW1haWwiOiJtb2hhbkBnbWFpbC5jb20iLCJleHAiOjE3MjIwNTIxMDZ9.Vh2Kp9eGQ3zgvedSv5zGKDwcHHeZyLvP5FAzme0zjkY",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -616,7 +654,7 @@
 	"variable": [
 		{
 			"key": "url",
-			"value": "",
+			"value": "http://localhost:8000",
 			"type": "string"
 		}
 	]

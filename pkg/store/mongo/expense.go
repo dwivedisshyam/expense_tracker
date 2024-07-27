@@ -1,4 +1,4 @@
-package store
+package mongo
 
 import (
 	"time"
@@ -9,10 +9,12 @@ import (
 	"gofr.dev/pkg/gofr"
 )
 
-type expStore struct{}
+type expStore struct {
+	idGen func(time.Time) string
+}
 
-func NewExpense() Expense {
-	return &expStore{}
+func NewExpense(idGen func(time.Time) string) *expStore {
+	return &expStore{idGen: idGen}
 }
 
 func (us *expStore) Index(ctx *gofr.Context, f *model.ExpenseFilter) ([]model.Expense, error) {
@@ -31,7 +33,7 @@ func (us *expStore) Index(ctx *gofr.Context, f *model.ExpenseFilter) ([]model.Ex
 }
 
 func (us *expStore) Create(ctx *gofr.Context, e *model.Expense) (*model.Expense, error) {
-	e.ID = calculateNewID(time.Now())
+	e.ID = us.idGen(time.Now())
 
 	_, err := ctx.Mongo.InsertOne(ctx, CollectionExpense, e)
 	if err != nil {

@@ -9,3 +9,6 @@ type Income struct {
 	Amount float64   `json:"amount"`
 	Date   time.Time `json:"date"`
 }
+
+type IncomeFilter struct {
+}
