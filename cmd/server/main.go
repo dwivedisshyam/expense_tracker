@@ -11,6 +11,7 @@ import (
 	"gofr.dev/pkg/gofr/datasource/mongo"
 )
 
+// ingnoring funlen linter
 // nolint: funlen
 func main() {
 	app := gofr.New()
